@@ -172,7 +172,7 @@ export const use3DScene = create<Scene3DState>()(
       },
       
       // Debug and development
-      showStats: process.env.NODE_ENV === 'development',
+      showStats: import.meta.env.DEV,
       showHelper: false,
       wireframeMode: false,
       debugMode: false,

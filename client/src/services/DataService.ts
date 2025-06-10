@@ -13,8 +13,8 @@ export class DataService {
   private retryDelay: number = 1000;
 
   constructor() {
-    this.apiBaseUrl = process.env.VITE_API_BASE_URL || '/api';
-    this.apiKey = process.env.VITE_API_KEY || '';
+    this.apiBaseUrl = import.meta.env.VITE_API_BASE_URL || '/api';
+    this.apiKey = import.meta.env.VITE_API_KEY || '';
   }
 
   /**

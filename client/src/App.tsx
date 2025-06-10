@@ -139,7 +139,7 @@ function App() {
                 <Suspense fallback={null}>
                   <Scene3D />
                 </Suspense>
-                {process.env.NODE_ENV === 'development' && <Stats />}
+                {import.meta.env.DEV && <Stats />}
               </Canvas>
             </motion.div>
           )}

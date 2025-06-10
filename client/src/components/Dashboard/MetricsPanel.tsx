@@ -194,7 +194,7 @@ const MetricsPanel: React.FC<MetricsPanelProps> = ({
             { label: "Data Quality", value: 89, color: "bg-green-500" },
             { label: "Network Latency", value: 76, color: "bg-yellow-500" },
             { label: "Storage Usage", value: 68, color: "bg-purple-500" }
-          ].map((item) => (
+          ].map((item, index) => (
             <div key={item.label}>
               <div className="flex justify-between items-center mb-1">
                 <span className="text-white/70 text-sm">{item.label}</span>
