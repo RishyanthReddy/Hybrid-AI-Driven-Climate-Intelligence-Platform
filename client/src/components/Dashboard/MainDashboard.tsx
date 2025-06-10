@@ -145,7 +145,7 @@ const MainDashboard: React.FC = () => {
                     <Suspense fallback={null}>
                       <ambientLight intensity={0.6} />
                       <directionalLight position={[10, 10, 5]} intensity={1} />
-                      <EnergyGrid3D data={energyData} />
+                      <InteractiveEnergyGrid3D data={energyData} interactive={false} />
                     </Suspense>
                   </Canvas>
                 </div>

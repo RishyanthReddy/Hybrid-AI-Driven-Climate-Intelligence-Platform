@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Canvas } from "@react-three/fiber";
 import { Suspense } from "react";
-import EnergyGrid3D from "../3D/EnergyGrid3D";
+import InteractiveEnergyGrid3D from "../3D/InteractiveEnergyGrid3D";
 import { useEnergyData } from "../../lib/stores/useEnergyData";
 import { useAlgorithms } from "../../lib/hooks/useAlgorithms";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
@@ -408,7 +408,7 @@ const EnergyDistribution: React.FC = () => {
                 <pointLight position={[0, 10, 0]} intensity={0.5} color="#4facfe" />
                 
                 {distributionData && (
-                  <EnergyGrid3D 
+                  <InteractiveEnergyGrid3D 
                     data={distributionData} 
                     interactive={true}
                     selectedNode={selectedNode}
