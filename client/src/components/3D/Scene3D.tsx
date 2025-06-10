@@ -2,7 +2,7 @@ import React, { Suspense, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { OrbitControls, Environment, Sky, Cloud } from "@react-three/drei";
 import * as THREE from "three";
-import EnergyGrid3D from "./EnergyGrid3D";
+import InteractiveEnergyGrid3D from "./InteractiveEnergyGrid3D";
 import ClimateHeatmap from "./ClimateHeatmap";
 import ParticleSystem from "./ParticleSystem";
 import { use3DScene } from "../../lib/stores/use3DScene";
@@ -69,25 +69,36 @@ const Scene3D: React.FC = () => {
         mieDirectionalG={0.8}
       />
       
-      {/* Atmospheric clouds */}
-      <Cloud
-        position={[20, 15, -30]}
-        args={[3, 2]}
-        material-color="#ffffff"
-        material-opacity={0.4}
-      />
-      <Cloud
-        position={[-25, 20, 25]}
-        args={[4, 3]}
-        material-color="#ffffff"
-        material-opacity={0.3}
-      />
-      <Cloud
-        position={[0, 25, -20]}
-        args={[5, 2]}
-        material-color="#ffffff"
-        material-opacity={0.5}
-      />
+      {/* Atmospheric clouds - using safe properties */}
+      <group>
+        <mesh position={[20, 15, -30]}>
+          <sphereGeometry args={[3, 8, 8]} />
+          <meshStandardMaterial
+            color="#ffffff"
+            transparent
+            opacity={0.4}
+            fog={true}
+          />
+        </mesh>
+        <mesh position={[-25, 20, 25]}>
+          <sphereGeometry args={[4, 8, 8]} />
+          <meshStandardMaterial
+            color="#ffffff"
+            transparent
+            opacity={0.3}
+            fog={true}
+          />
+        </mesh>
+        <mesh position={[0, 25, -20]}>
+          <sphereGeometry args={[5, 8, 8]} />
+          <meshStandardMaterial
+            color="#ffffff"
+            transparent
+            opacity={0.5}
+            fog={true}
+          />
+        </mesh>
+      </group>
     </>
   );
 
@@ -131,7 +142,7 @@ const Scene3D: React.FC = () => {
         {sceneType === 'overview' && (
           <>
             <group position={[-15, 0, 0]}>
-              <EnergyGrid3D data={energyData} />
+              <InteractiveEnergyGrid3D data={energyData} interactive={false} />
             </group>
             <group position={[15, 0, 0]}>
               <ClimateHeatmap data={climateData} />
@@ -140,7 +151,7 @@ const Scene3D: React.FC = () => {
         )}
         
         {sceneType === 'energy' && (
-          <EnergyGrid3D data={energyData} interactive={true} />
+          <InteractiveEnergyGrid3D data={energyData} interactive={true} />
         )}
         
         {sceneType === 'climate' && (

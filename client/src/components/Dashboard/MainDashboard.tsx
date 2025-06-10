@@ -4,7 +4,7 @@ import { Canvas } from "@react-three/fiber";
 import { Suspense } from "react";
 import MetricsPanel from "./MetricsPanel";
 import AIInsightsPanel from "./AIInsightsPanel";
-import EnergyGrid3D from "../3D/EnergyGrid3D";
+import InteractiveEnergyGrid3D from "../3D/InteractiveEnergyGrid3D";
 import ClimateHeatmap from "../3D/ClimateHeatmap";
 import DataVisualization from "../Visualization/DataVisualization";
 import { useClimateData } from "../../lib/stores/useClimateData";

@@ -294,7 +294,7 @@ const EnergyGrid3D: React.FC<EnergyGrid3DProps> = ({ data, interactive = false }
       <Text
         position={[0, 6, 0]}
         fontSize={1}
-        color="white"
+        color="#ffffff"
         anchorX="center"
         anchorY="middle"
       >
@@ -305,7 +305,7 @@ const EnergyGrid3D: React.FC<EnergyGrid3DProps> = ({ data, interactive = false }
       <Text
         position={[0, -3, 0]}
         fontSize={0.4}
-        color="rgba(255,255,255,0.7)"
+        color="#ffffff"
         anchorX="center"
         anchorY="middle"
       >
