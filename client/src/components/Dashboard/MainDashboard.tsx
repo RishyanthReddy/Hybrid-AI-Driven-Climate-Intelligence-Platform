@@ -179,7 +179,7 @@ const MainDashboard: React.FC = () => {
                   <ambientLight intensity={0.4} />
                   <directionalLight position={[10, 10, 5]} intensity={1} />
                   <pointLight position={[0, 10, 0]} intensity={0.5} color="#4facfe" />
-                  <EnergyGrid3D data={energyData} interactive={true} />
+                  <InteractiveEnergyGrid3D data={energyData} interactive={true} />
                 </Suspense>
               </Canvas>
             </div>
