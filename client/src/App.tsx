@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import EnhancedMainDashboard from "./components/Dashboard/EnhancedMainDashboard";
 import Sidebar from "./components/Navigation/Sidebar";
 import Header from "./components/Navigation/Header";
+import ScrollNavigation from "./components/Navigation/ScrollNavigation";
 import CommunityVulnerability from "./components/EnergyAccess/CommunityVulnerability";
 import EnergyDistribution from "./components/EnergyAccess/EnergyDistribution";
 import ActionTracker from "./components/ClimateAction/ActionTracker";
@@ -111,7 +112,7 @@ function App() {
 
   return (
     <ErrorBoundary>
-      <div className="h-screen w-screen overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900">
+      <div className="min-h-screen w-screen overflow-auto bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900">
         {/* 3D Background Scene */}
         <AnimatePresence>
           {show3D && (
@@ -135,6 +136,8 @@ function App() {
                   alpha: true
                 }}
                 dpr={[1, 2]}
+                style={{ width: '100vw', height: '100vh' }}
+                resize={{ scroll: false, debounce: { scroll: 50, resize: 0 } }}
               >
                 <Suspense fallback={null}>
                   <Scene3D />
@@ -146,7 +149,7 @@ function App() {
         </AnimatePresence>
 
         {/* Main Layout */}
-        <div className="relative z-10 flex h-full">
+        <div className="relative z-10 flex min-h-screen">
           {/* Sidebar */}
           <AnimatePresence>
             {sidebarOpen && (
@@ -174,7 +177,7 @@ function App() {
             />
 
             {/* Content Area */}
-            <main className="flex-1 overflow-hidden">
+            <main className="flex-1 overflow-y-auto">
               <Routes>
                 <Route path="/" element={<EnhancedMainDashboard />} />
                 <Route path="/dashboard" element={<EnhancedMainDashboard />} />
@@ -192,6 +195,9 @@ function App() {
 
         {/* Global Overlay for Glassmorphism Effects */}
         <div className="fixed inset-0 pointer-events-none z-5 bg-gradient-to-br from-blue-500/10 via-transparent to-purple-500/10"></div>
+        
+        {/* Scroll Navigation */}
+        <ScrollNavigation />
       </div>
     </ErrorBoundary>
   );
