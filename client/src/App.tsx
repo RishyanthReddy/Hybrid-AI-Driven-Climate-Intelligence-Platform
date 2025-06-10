@@ -3,7 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import { Canvas } from "@react-three/fiber";
 import { Stats } from "@react-three/drei";
 import { motion, AnimatePresence } from "framer-motion";
-import MainDashboard from "./components/Dashboard/MainDashboard";
+import EnhancedMainDashboard from "./components/Dashboard/EnhancedMainDashboard";
 import Sidebar from "./components/Navigation/Sidebar";
 import Header from "./components/Navigation/Header";
 import CommunityVulnerability from "./components/EnergyAccess/CommunityVulnerability";
@@ -176,8 +176,8 @@ function App() {
             {/* Content Area */}
             <main className="flex-1 overflow-hidden">
               <Routes>
-                <Route path="/" element={<MainDashboard />} />
-                <Route path="/dashboard" element={<MainDashboard />} />
+                <Route path="/" element={<EnhancedMainDashboard />} />
+                <Route path="/dashboard" element={<EnhancedMainDashboard />} />
                 <Route path="/energy" element={<EnergyDistribution />} />
                 <Route path="/energy/vulnerability" element={<CommunityVulnerability />} />
                 <Route path="/energy/distribution" element={<EnergyDistribution />} />
