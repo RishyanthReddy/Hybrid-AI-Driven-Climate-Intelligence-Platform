@@ -8,6 +8,7 @@ import InteractiveEnergyGrid3D from '../3D/InteractiveEnergyGrid3D';
 import InteractiveCityGrid from '../3D/InteractiveCityGrid';
 import CarbonEmissionParticles from '../3D/CarbonEmissionParticles';
 import AdvancedDataVisualization from '../Analytics/AdvancedDataVisualization';
+import TerrainGraph from '../3D/TerrainGraph';
 import { useClimateData } from '../../lib/stores/useClimateData';
 import { useEnergyData } from '../../lib/stores/useEnergyData';
 import { useAlgorithms } from '../../lib/hooks/useAlgorithms';
@@ -15,7 +16,7 @@ import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 
 const EnhancedMainDashboard: React.FC = () => {
-  const [activeView, setActiveView] = useState<'overview' | 'energy' | 'climate' | 'analytics' | '3d-city'>('overview');
+  const [activeView, setActiveView] = useState<'overview' | 'energy' | 'climate' | 'analytics' | '3d-city' | 'terrain'>('overview');
   const [show3DParticles, setShow3DParticles] = useState(true);
   const [selectedBuilding, setSelectedBuilding] = useState<any>(null);
   
@@ -85,6 +86,7 @@ const EnhancedMainDashboard: React.FC = () => {
         { key: 'overview', label: 'Overview', icon: 'fas fa-home' },
         { key: 'energy', label: 'Energy Grid', icon: 'fas fa-bolt' },
         { key: 'climate', label: 'Climate Impact', icon: 'fas fa-leaf' },
+        { key: 'terrain', label: 'Terrain Graph', icon: 'fas fa-mountain' },
         { key: '3d-city', label: 'City Visualization', icon: 'fas fa-city' },
         { key: 'analytics', label: 'Analytics', icon: 'fas fa-chart-line' }
       ].map(view => (
@@ -333,6 +335,36 @@ const EnhancedMainDashboard: React.FC = () => {
         )}
         
         {activeView === '3d-city' && <CityVisualization />}
+        
+        {activeView === 'terrain' && (
+          <div className="h-full bg-black/20 rounded-xl overflow-hidden">
+            <Canvas camera={{ position: [0, 10, 20], fov: 60 }}>
+              <Suspense fallback={null}>
+                <TerrainGraph 
+                  data={{
+                    climateData: (climateData?.regions || []).map(region => ({
+                      region: region.name || 'Unknown',
+                      temperature: region.temperature || 20,
+                      precipitation: region.humidity || 50,
+                      elevation: Math.random() * 1000,
+                      riskLevel: region.riskLevel || 0.5
+                    })),
+                    energyData: (energyData?.regions || []).map(region => ({
+                      region: region.name || 'Unknown',
+                      consumption: region.consumption || 1000,
+                      production: region.generation || 800,
+                      efficiency: region.efficiency || 75
+                    }))
+                  }}
+                  interactive={true}
+                />
+              </Suspense>
+              <ambientLight intensity={0.4} />
+              <directionalLight position={[10, 10, 5]} intensity={0.8} />
+              <pointLight position={[0, 15, 0]} intensity={0.5} color="#43e97b" />
+            </Canvas>
+          </div>
+        )}
         
         {activeView === 'analytics' && (
           <AdvancedDataVisualization
