@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useClimateData } from '../stores/useClimateData';
 import { useEnergyData } from '../stores/useEnergyData';
+import { resilienceCalculator, ResilienceMetrics } from '../algorithms/ResilienceIndex';
 
 interface EnergyFlowResult {
   efficiency: number;
@@ -31,6 +32,7 @@ interface ClimateScoreResult {
 
 interface VulnerabilityResult {
   riskLevel: 'low' | 'medium' | 'high' | 'critical';
+  averageVulnerability: number;
   affectedRegions: Array<{
     regionId: string;
     vulnerabilityScore: number;
@@ -46,6 +48,7 @@ export function useAlgorithms() {
   const [energyFlowResults, setEnergyFlowResults] = useState<EnergyFlowResult | null>(null);
   const [climateScoreResults, setClimateScoreResults] = useState<ClimateScoreResult | null>(null);
   const [vulnerabilityResults, setVulnerabilityResults] = useState<VulnerabilityResult | null>(null);
+  const [resilienceResults, setResilienceResults] = useState<ResilienceMetrics | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
@@ -99,8 +102,11 @@ export function useAlgorithms() {
       if (climateData && energyData) {
         const riskLevel = assessVulnerabilityLevel(climateData, energyData);
         
+        const avgVulnerability = climateData.regions.reduce((sum, region) => sum + region.vulnerabilityIndex, 0) / climateData.regions.length;
+        
         setVulnerabilityResults({
           riskLevel,
+          averageVulnerability: avgVulnerability,
           affectedRegions: climateData.regions.slice(0, 3).map(region => ({
             regionId: region.id,
             vulnerabilityScore: region.vulnerabilityIndex,
@@ -108,6 +114,37 @@ export function useAlgorithms() {
           })),
           recommendations: generateVulnerabilityRecommendations(riskLevel)
         });
+
+        // ResilienceIndex Calculation
+        const resilienceFactors = {
+          infrastructure: {
+            energyGridStability: calculateSystemEfficiency(energyData),
+            transportationResilience: 75 + Math.random() * 20,
+            buildingStandards: 65 + Math.random() * 25,
+            waterManagement: 70 + Math.random() * 20
+          },
+          community: {
+            emergencyPreparedness: 60 + Math.random() * 30,
+            socialNetworks: 70 + Math.random() * 25,
+            localKnowledge: 65 + Math.random() * 30,
+            institutionalCapacity: 55 + Math.random() * 35
+          },
+          economic: {
+            diversification: 60 + Math.random() * 30,
+            financialReserves: 45 + Math.random() * 40,
+            insuranceCoverage: 50 + Math.random() * 35,
+            recoveryCapacity: 55 + Math.random() * 30
+          },
+          environmental: {
+            ecosystemHealth: 70 + Math.random() * 25,
+            naturalBuffers: 65 + Math.random() * 30,
+            biodiversityIndex: 60 + Math.random() * 35,
+            resourceAvailability: 75 + Math.random() * 20
+          }
+        };
+
+        const resilienceMetrics = resilienceCalculator.calculateResilienceIndex(resilienceFactors);
+        setResilienceResults(resilienceMetrics);
       }
       
     } catch (error) {
@@ -207,6 +244,7 @@ export function useAlgorithms() {
     energyFlowResults,
     climateScoreResults,
     vulnerabilityResults,
+    resilienceResults,
     isProcessing,
     runAlgorithms
   };
