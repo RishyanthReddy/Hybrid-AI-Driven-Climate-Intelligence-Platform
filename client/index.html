@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Climate AI - Ultimate Energy & Climate Action Platform</title>
+    <meta name="description" content="Revolutionary Climate AI platform combining Energy Access Solutions and Climate Action Tracking with 3D visualizations and proprietary algorithms." />
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Custom CSS Variables for Glassmorphism -->
+    <style>
+      :root {
+        --glass-bg: rgba(255, 255, 255, 0.1);
+        --glass-border: rgba(255, 255, 255, 0.2);
+        --backdrop-blur: 10px;
+        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        --energy-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        --climate-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+      }
+      
+      body {
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background-attachment: fixed;
+        overflow: hidden;
+      }
+      
+      /* Glassmorphism base styles */
+      .glass {
+        background: var(--glass-bg);
+        backdrop-filter: blur(var(--backdrop-blur));
+        -webkit-backdrop-filter: blur(var(--backdrop-blur));
+        border: 1px solid var(--glass-border);
+        border-radius: 16px;
+      }
+      
+      /* Prevent FOUC */
+      .initial-loading {
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+      }
+      
+      .loaded {
+        opacity: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root" class="initial-loading"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    <script>
+      // Remove loading class when DOM is ready
+      document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(() => {
+          document.getElementById('root').classList.add('loaded');
+        }, 100);
+      });
+    </script>
+  </body>
+</html>
