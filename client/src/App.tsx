@@ -178,8 +178,10 @@ function App() {
               <Routes>
                 <Route path="/" element={<MainDashboard />} />
                 <Route path="/dashboard" element={<MainDashboard />} />
+                <Route path="/energy" element={<EnergyDistribution />} />
                 <Route path="/energy/vulnerability" element={<CommunityVulnerability />} />
                 <Route path="/energy/distribution" element={<EnergyDistribution />} />
+                <Route path="/climate" element={<ActionTracker />} />
                 <Route path="/climate/actions" element={<ActionTracker />} />
                 <Route path="/climate/progress" element={<ProgressMonitor />} />
                 <Route path="*" element={<NotFound />} />

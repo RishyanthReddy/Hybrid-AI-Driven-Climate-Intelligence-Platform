@@ -120,11 +120,13 @@ const MetricsPanel: React.FC<MetricsPanelProps> = ({
                 {metric.trend}
               </span>
             </div>
-            <div className="text-2xl font-bold text-white mb-1">
-              {metric.value}
-              <span className="text-sm text-white/60 ml-1">{metric.unit}</span>
+            <div className="flex items-baseline gap-1 mb-1">
+              <span className="text-xl font-bold text-white truncate">
+                {typeof metric.value === 'number' ? metric.value.toFixed(1) : metric.value}
+              </span>
+              <span className="text-xs text-white/60 flex-shrink-0">{metric.unit}</span>
             </div>
-            <p className="text-white/60 text-xs">{metric.title}</p>
+            <p className="text-white/60 text-xs leading-tight">{metric.title}</p>
           </motion.div>
         ))}
       </div>

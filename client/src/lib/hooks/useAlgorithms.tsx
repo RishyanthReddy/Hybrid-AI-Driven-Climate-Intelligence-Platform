@@ -210,4 +210,4 @@ export function useAlgorithms() {
     isProcessing,
     runAlgorithms
   };
-}
+};
