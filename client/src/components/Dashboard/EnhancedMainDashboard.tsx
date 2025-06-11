@@ -9,7 +9,7 @@ import InteractiveEnergyGrid3D from '../3D/InteractiveEnergyGrid3D';
 import InteractiveCityGrid from '../3D/InteractiveCityGrid';
 import CarbonEmissionParticles from '../3D/CarbonEmissionParticles';
 import AdvancedDataVisualization from '../Analytics/AdvancedDataVisualization';
-import TerrainGraph from '../3D/TerrainGraph';
+
 import ClimateImpactDashboard from '../ClimateAction/ClimateImpactDashboard';
 import { useClimateData } from '../../lib/stores/useClimateData';
 import { useEnergyData } from '../../lib/stores/useEnergyData';
@@ -18,7 +18,7 @@ import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 
 const EnhancedMainDashboard: React.FC = () => {
-  const [activeView, setActiveView] = useState<'overview' | 'energy' | 'climate' | 'analytics' | '3d-city' | 'terrain'>('overview');
+  const [activeView, setActiveView] = useState<'overview' | 'energy' | 'climate' | 'analytics' | '3d-city'>('overview');
   const [show3DParticles, setShow3DParticles] = useState(true);
   const [selectedBuilding, setSelectedBuilding] = useState<any>(null);
   
@@ -88,7 +88,6 @@ const EnhancedMainDashboard: React.FC = () => {
         { key: 'overview', label: 'Overview', icon: 'fas fa-home' },
         { key: 'energy', label: 'Energy Grid', icon: 'fas fa-bolt' },
         { key: 'climate', label: 'Climate Impact', icon: 'fas fa-leaf' },
-        { key: 'terrain', label: 'Terrain Graph', icon: 'fas fa-mountain' },
         { key: '3d-city', label: 'City Visualization', icon: 'fas fa-city' },
         { key: 'analytics', label: 'Analytics', icon: 'fas fa-chart-line' }
       ].map(view => (
@@ -331,76 +330,7 @@ const EnhancedMainDashboard: React.FC = () => {
         
         {activeView === '3d-city' && <CityVisualization />}
         
-        {activeView === 'terrain' && (
-          <div className="h-full bg-black/20 rounded-xl overflow-hidden">
-            <Canvas camera={{ position: [15, 20, 15], fov: 60 }}>
-              <OrbitControls
-                enablePan={true}
-                enableZoom={true}
-                enableRotate={true}
-                minDistance={5}
-                maxDistance={80}
-                minPolarAngle={0}
-                maxPolarAngle={Math.PI / 2}
-                autoRotate={false}
-                autoRotateSpeed={0.5}
-                target={[0, 0, 0]}
-              />
-              <Suspense fallback={
-                <mesh>
-                  <boxGeometry args={[2, 2, 2]} />
-                  <meshStandardMaterial color="#4facfe" wireframe />
-                </mesh>
-              }>
-                <TerrainGraph
-                  data={{
-                    climateData: (climateData?.regions && climateData.regions.length > 0)
-                      ? climateData.regions.map(region => ({
-                          region: region.name || 'Unknown',
-                          temperature: region.temperature || 20,
-                          precipitation: region.precipitation || 50,
-                          elevation: Math.random() * 1000 + 100,
-                          riskLevel: region.vulnerabilityIndex || Math.random() * 0.8 + 0.1
-                        }))
-                      : [
-                          { region: 'North America', temperature: 22.5, precipitation: 65, elevation: 850, riskLevel: 0.4 },
-                          { region: 'Europe', temperature: 18.3, precipitation: 78, elevation: 420, riskLevel: 0.3 },
-                          { region: 'Asia Pacific', temperature: 26.1, precipitation: 92, elevation: 1200, riskLevel: 0.7 },
-                          { region: 'South America', temperature: 24.8, precipitation: 88, elevation: 950, riskLevel: 0.5 },
-                          { region: 'Africa', temperature: 28.2, precipitation: 45, elevation: 680, riskLevel: 0.8 },
-                          { region: 'Middle East', temperature: 31.5, precipitation: 25, elevation: 320, riskLevel: 0.9 },
-                          { region: 'Oceania', temperature: 21.7, precipitation: 72, elevation: 180, riskLevel: 0.6 },
-                          { region: 'Arctic', temperature: -2.1, precipitation: 35, elevation: 50, riskLevel: 0.95 },
-                          { region: 'Antarctica', temperature: -18.5, precipitation: 15, elevation: 2200, riskLevel: 0.85 }
-                        ],
-                    energyData: (energyData?.regions && energyData.regions.length > 0)
-                      ? energyData.regions.map(region => ({
-                          region: region.name || 'Unknown',
-                          consumption: region.consumption || 1000,
-                          production: region.generation || 800,
-                          efficiency: ((region.generation || 800) / (region.consumption || 1000)) * 100
-                        }))
-                      : [
-                          { region: 'North America', consumption: 1200, production: 1100, efficiency: 91.7 },
-                          { region: 'Europe', consumption: 980, production: 1050, efficiency: 107.1 },
-                          { region: 'Asia Pacific', consumption: 1800, production: 1650, efficiency: 91.7 },
-                          { region: 'South America', consumption: 450, production: 520, efficiency: 115.6 },
-                          { region: 'Africa', consumption: 320, production: 280, efficiency: 87.5 },
-                          { region: 'Middle East', consumption: 680, production: 750, efficiency: 110.3 },
-                          { region: 'Oceania', consumption: 180, production: 195, efficiency: 108.3 },
-                          { region: 'Arctic', consumption: 25, production: 30, efficiency: 120.0 },
-                          { region: 'Antarctica', consumption: 15, production: 18, efficiency: 120.0 }
-                        ]
-                  }}
-                  interactive={true}
-                />
-              </Suspense>
-              <ambientLight intensity={0.6} />
-              <directionalLight position={[10, 10, 5]} intensity={1.0} />
-              <pointLight position={[0, 15, 0]} intensity={0.7} color="#43e97b" />
-            </Canvas>
-          </div>
-        )}
+
         
         {activeView === 'analytics' && (
           <AdvancedDataVisualization
