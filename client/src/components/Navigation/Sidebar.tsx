@@ -55,6 +55,32 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
           description: "Performance Analytics"
         }
       ]
+    },
+    {
+      title: "Sustainability",
+      icon: "fas fa-seedling",
+      path: "/sustainability",
+      description: "Equitable Future Building",
+      submenu: [
+        {
+          title: "Sustainable Jobs",
+          icon: "fas fa-briefcase",
+          path: "/sustainability/jobs",
+          description: "Green Economy Opportunities"
+        },
+        {
+          title: "Cultural Heritage",
+          icon: "fas fa-landmark",
+          path: "/sustainability/cultural",
+          description: "Preservation & Documentation"
+        },
+        {
+          title: "Economic Equity",
+          icon: "fas fa-balance-scale",
+          path: "/sustainability/equity",
+          description: "Fair Distribution & Transparency"
+        }
+      ]
     }
   ];
 

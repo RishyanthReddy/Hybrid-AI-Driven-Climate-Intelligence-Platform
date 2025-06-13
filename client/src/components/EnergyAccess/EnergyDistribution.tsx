@@ -153,7 +153,7 @@ const EnergyDistribution: React.FC = () => {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="h-full overflow-hidden"
+      className="min-h-[200vh] overflow-auto bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 p-6"
     >
       {/* Header */}
       <motion.div variants={itemVariants} className="p-6 border-b border-white/10">
@@ -468,6 +468,150 @@ const EnergyDistribution: React.FC = () => {
             </div>
           )}
         </motion.div>
+      </div>
+
+      {/* Additional Content for Scrolling */}
+      <div className="mt-16 space-y-12 max-w-7xl mx-auto">
+        {/* Energy Analytics Section */}
+        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-8">
+          <h2 className="text-3xl font-bold text-white mb-6">Energy Distribution Analytics</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="bg-gradient-to-br from-blue-500/20 to-cyan-500/20 p-6 rounded-lg border border-white/10">
+              <h3 className="text-xl font-semibold text-blue-300 mb-3">⚡ Grid Efficiency</h3>
+              <p className="text-white/80 mb-4">
+                Real-time monitoring and optimization of energy distribution across the entire grid network.
+              </p>
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-sm text-white/60">Current Efficiency</span>
+                  <span className="text-sm font-medium text-white">94.2%</span>
+                </div>
+                <div className="w-full bg-white/20 rounded-full h-2">
+                  <div className="bg-blue-400 h-2 rounded-full" style={{ width: '94.2%' }}></div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-br from-green-500/20 to-emerald-500/20 p-6 rounded-lg border border-white/10">
+              <h3 className="text-xl font-semibold text-green-300 mb-3">🔋 Storage Systems</h3>
+              <p className="text-white/80 mb-4">
+                Advanced battery storage integration for peak load management and grid stability.
+              </p>
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-sm text-white/60">Storage Capacity</span>
+                  <span className="text-sm font-medium text-white">2.4 GWh</span>
+                </div>
+                <div className="w-full bg-white/20 rounded-full h-2">
+                  <div className="bg-green-400 h-2 rounded-full" style={{ width: '78%' }}></div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-br from-purple-500/20 to-pink-500/20 p-6 rounded-lg border border-white/10">
+              <h3 className="text-xl font-semibold text-purple-300 mb-3">🌐 Smart Grid</h3>
+              <p className="text-white/80 mb-4">
+                AI-powered grid management with predictive analytics and automated load balancing.
+              </p>
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-sm text-white/60">AI Optimization</span>
+                  <span className="text-sm font-medium text-white">Active</span>
+                </div>
+                <div className="w-full bg-white/20 rounded-full h-2">
+                  <div className="bg-purple-400 h-2 rounded-full" style={{ width: '89%' }}></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Performance Metrics Section */}
+        <div className="bg-gradient-to-r from-indigo-500/10 to-blue-500/10 rounded-xl p-8 border border-white/10">
+          <h2 className="text-3xl font-bold text-white mb-6">Performance Metrics & Insights</h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="space-y-6">
+              <div className="bg-white/10 p-6 rounded-lg">
+                <h3 className="text-xl font-semibold text-white mb-3">📊 Real-time Statistics</h3>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-white/70">Peak Load Today</span>
+                    <span className="text-white font-bold">1,247 MW</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-white/70">Average Efficiency</span>
+                    <span className="text-green-400 font-bold">94.2%</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-white/70">Grid Reliability</span>
+                    <span className="text-blue-400 font-bold">99.8%</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-white/70">Carbon Reduction</span>
+                    <span className="text-purple-400 font-bold">-23.4%</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white/10 p-6 rounded-lg">
+                <h3 className="text-xl font-semibold text-white mb-3">🎯 Optimization Goals</h3>
+                <div className="space-y-3">
+                  <div>
+                    <div className="flex justify-between mb-1">
+                      <span className="text-sm text-white/70">Renewable Integration</span>
+                      <span className="text-sm text-white">87%</span>
+                    </div>
+                    <div className="w-full bg-white/20 rounded-full h-2">
+                      <div className="bg-green-500 h-2 rounded-full" style={{ width: '87%' }}></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="flex justify-between mb-1">
+                      <span className="text-sm text-white/70">Load Balancing</span>
+                      <span className="text-sm text-white">92%</span>
+                    </div>
+                    <div className="w-full bg-white/20 rounded-full h-2">
+                      <div className="bg-blue-500 h-2 rounded-full" style={{ width: '92%' }}></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="flex justify-between mb-1">
+                      <span className="text-sm text-white/70">Predictive Accuracy</span>
+                      <span className="text-sm text-white">96%</span>
+                    </div>
+                    <div className="w-full bg-white/20 rounded-full h-2">
+                      <div className="bg-purple-500 h-2 rounded-full" style={{ width: '96%' }}></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white/10 p-6 rounded-lg">
+              <h3 className="text-xl font-semibold text-white mb-4">🔮 Future Projections</h3>
+              <div className="space-y-4">
+                <div className="border-l-4 border-blue-400 pl-4">
+                  <h4 className="text-white font-medium">Next 24 Hours</h4>
+                  <p className="text-white/70 text-sm">Peak demand expected at 6 PM (1,340 MW)</p>
+                  <p className="text-blue-400 text-sm">Recommendation: Activate storage systems</p>
+                </div>
+                <div className="border-l-4 border-green-400 pl-4">
+                  <h4 className="text-white font-medium">Next Week</h4>
+                  <p className="text-white/70 text-sm">Renewable generation forecast: 78% capacity</p>
+                  <p className="text-green-400 text-sm">Optimal conditions for grid efficiency</p>
+                </div>
+                <div className="border-l-4 border-purple-400 pl-4">
+                  <h4 className="text-white font-medium">Next Month</h4>
+                  <p className="text-white/70 text-sm">Planned maintenance: 3 distribution nodes</p>
+                  <p className="text-purple-400 text-sm">Load redistribution strategy ready</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Extra spacing for scrolling */}
+        <div className="h-32"></div>
       </div>
     </motion.div>
   );

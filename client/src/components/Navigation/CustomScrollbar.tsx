@@ -147,21 +147,21 @@ const CustomScrollbar: React.FC = () => {
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 20 }}
-      className="fixed right-4 top-4 bottom-4 z-[9999] w-4 flex items-center"
+      className="fixed right-2 top-4 bottom-4 z-[9999] w-6 flex items-center"
     >
       {/* Scrollbar Track */}
       <div
         ref={scrollbarRef}
         onClick={handleScrollbarClick}
-        className="relative w-full bg-white/30 backdrop-blur-sm rounded-full border-2 border-white/50 cursor-pointer hover:bg-white/40 transition-all duration-200 shadow-xl"
+        className="relative w-full bg-black/40 backdrop-blur-sm rounded-full border-2 border-blue-400/50 cursor-pointer hover:bg-black/60 transition-all duration-200 shadow-2xl"
         style={{ height: 'calc(100vh - 2rem)' }}
       >
         {/* Scrollbar Thumb */}
         <motion.div
           ref={thumbRef}
           onMouseDown={handleMouseDown}
-          className={`absolute left-0 right-0 bg-gradient-to-b from-blue-400 to-purple-500 rounded-full cursor-grab transition-all duration-200 shadow-lg ${
-            isDragging ? 'cursor-grabbing bg-gradient-to-b from-blue-300 to-purple-400 shadow-xl' : ''
+          className={`absolute left-0 right-0 bg-gradient-to-b from-blue-500 via-purple-500 to-pink-500 rounded-full cursor-grab transition-all duration-200 shadow-2xl border border-white/20 ${
+            isDragging ? 'cursor-grabbing bg-gradient-to-b from-blue-400 via-purple-400 to-pink-400 shadow-blue-500/50 scale-110' : 'hover:scale-105 hover:shadow-blue-400/40'
           }`}
           style={{
             height: `${thumbHeight}%`,

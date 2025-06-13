@@ -1,20 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import MetricsPanel from './MetricsPanel';
 import AIInsightsPanel from './AIInsightsPanel';
 import AdvancedDataVisualization from '../Analytics/AdvancedDataVisualization';
 import ClimateImpactDashboard from '../ClimateAction/ClimateImpactDashboard';
 import CinematicVisualization from '../3D/CinematicVisualization';
+import SustainabilityGlobe3D from '../3D/SustainabilityGlobe3D';
 import { useClimateData } from '../../lib/stores/useClimateData';
 import { useEnergyData } from '../../lib/stores/useEnergyData';
 import { useAlgorithms } from '../../lib/hooks/useAlgorithms';
+import { sustainabilityService } from '../../services/SustainabilityService';
+import { realTimeDataService, RealTimeMetrics } from '../../services/RealTimeDataService';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Badge } from '../ui/badge';
+import { Progress } from '../ui/progress';
+import {
+  Briefcase,
+  Users,
+  Building,
+  TrendingUp,
+  Leaf,
+  Heart,
+  DollarSign,
+  Globe,
+  AlertTriangle,
+  Shield,
+  Target
+} from 'lucide-react';
 
 const EnhancedMainDashboard: React.FC = () => {
-  const [activeView, setActiveView] = useState<'overview' | 'energy' | 'climate' | 'analytics' | '3d-city' | '3d-visualizations'>('overview');
+  const [activeView, setActiveView] = useState<'overview' | 'energy' | 'climate' | 'analytics' | '3d-city' | '3d-visualizations' | 'sustainability'>('overview');
   const [show3DParticles, setShow3DParticles] = useState(true);
   const [selectedBuilding, setSelectedBuilding] = useState<any>(null);
+  const [sustainabilityData, setSustainabilityData] = useState<any>(null);
+  const [realTimeMetrics, setRealTimeMetrics] = useState<RealTimeMetrics | null>(null);
   const [realTimeData, setRealTimeData] = useState({
     efficiency: 98.7,
     load: 2.4,
@@ -86,6 +106,40 @@ const EnhancedMainDashboard: React.FC = () => {
       }));
   }, [cityBuildings]);
 
+  // Load sustainability data
+  useEffect(() => {
+    const loadSustainabilityData = async () => {
+      try {
+        const impactMetrics = await sustainabilityService.getSustainabilityImpactMetrics();
+        const jobRecommendations = await sustainabilityService.getJobRecommendations(1, 5);
+        const culturalPractices = await sustainabilityService.getCulturalPracticesData();
+        const economicEquity = await sustainabilityService.getEconomicEquityData();
+
+        setSustainabilityData({
+          impactMetrics,
+          jobRecommendations,
+          culturalPractices: culturalPractices.slice(0, 3),
+          economicEquity
+        });
+      } catch (error) {
+        console.error('Error loading sustainability data:', error);
+      }
+    };
+
+    loadSustainabilityData();
+  }, []);
+
+  // Set up real-time data subscription
+  useEffect(() => {
+    const subscriptionId = realTimeDataService.subscribe('sustainability', (metrics: RealTimeMetrics) => {
+      setRealTimeMetrics(metrics);
+    });
+
+    return () => {
+      realTimeDataService.unsubscribe(subscriptionId);
+    };
+  }, []);
+
   // Real-time data simulation
   React.useEffect(() => {
     const interval = setInterval(() => {
@@ -110,6 +164,7 @@ const EnhancedMainDashboard: React.FC = () => {
         { key: 'overview', label: 'Overview', icon: 'fas fa-home' },
         { key: 'energy', label: 'Energy Grid', icon: 'fas fa-bolt' },
         { key: 'climate', label: 'Climate Impact', icon: 'fas fa-leaf' },
+        { key: 'sustainability', label: 'Sustainability', icon: 'fas fa-seedling' },
         { key: '3d-city', label: 'City Visualization', icon: 'fas fa-city' },
         { key: '3d-visualizations', label: '3D Models', icon: 'fas fa-cube' },
         { key: 'analytics', label: 'Analytics', icon: 'fas fa-chart-line' }
@@ -169,7 +224,7 @@ const EnhancedMainDashboard: React.FC = () => {
     <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 h-full">
       {/* Metrics and AI Insights */}
       <div className="xl:col-span-1 space-y-6 overflow-y-auto max-h-screen">
-        <MetricsPanel 
+        <MetricsPanel
           energyData={energyData}
           climateData={climateData}
           algorithmResults={{
@@ -178,8 +233,8 @@ const EnhancedMainDashboard: React.FC = () => {
             vulnerability: vulnerabilityResults
           }}
         />
-        
-        <AIInsightsPanel 
+
+        <AIInsightsPanel
           isProcessing={isProcessing}
           insights={{
             energyEfficiency: energyFlowResults?.efficiency || 0,
@@ -187,6 +242,92 @@ const EnhancedMainDashboard: React.FC = () => {
             vulnerabilityLevel: vulnerabilityResults?.averageVulnerability || 0
           }}
         />
+
+        {/* Sustainability Impact Overview */}
+        {sustainabilityData?.impactMetrics && (
+          <Card className="glass border-white/10">
+            <CardHeader>
+              <CardTitle className="text-white text-lg flex items-center gap-2">
+                <Leaf className="h-5 w-5 text-green-400" />
+                Sustainability Impact
+                {realTimeMetrics && (
+                  <div className="flex items-center gap-1 ml-auto">
+                    <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                    <span className="text-xs text-green-400">Live</span>
+                  </div>
+                )}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  <div className="text-center">
+                    <div className="text-lg font-semibold text-green-400">
+                      {realTimeMetrics ?
+                        (sustainabilityData.impactMetrics.jobsCreated + realTimeMetrics.jobsCreatedToday).toLocaleString() :
+                        sustainabilityData.impactMetrics.jobsCreated.toLocaleString()
+                      }
+                    </div>
+                    <div className="text-white/60">Jobs Created</div>
+                    {realTimeMetrics && realTimeMetrics.jobsCreatedToday > 0 && (
+                      <div className="text-xs text-green-400">+{realTimeMetrics.jobsCreatedToday} today</div>
+                    )}
+                  </div>
+                  <div className="text-center">
+                    <div className="text-lg font-semibold text-purple-400">
+                      {sustainabilityData.impactMetrics.culturalPracticesDocumented}
+                    </div>
+                    <div className="text-white/60">Cultures Preserved</div>
+                    {realTimeMetrics && realTimeMetrics.culturalPracticesAtRisk > 0 && (
+                      <div className="text-xs text-red-400">{realTimeMetrics.culturalPracticesAtRisk} at risk</div>
+                    )}
+                  </div>
+                  <div className="text-center">
+                    <div className="text-lg font-semibold text-blue-400">
+                      {sustainabilityData.impactMetrics.supplyChainTransparencyImproved}
+                    </div>
+                    <div className="text-white/60">Supply Chains</div>
+                    {realTimeMetrics && (
+                      <div className="text-xs text-blue-400">
+                        {Math.round(realTimeMetrics.supplyChainTransparency)}% transparency
+                      </div>
+                    )}
+                  </div>
+                  <div className="text-center">
+                    <div className="text-lg font-semibold text-orange-400">
+                      {sustainabilityData.impactMetrics.communitiesSupported}
+                    </div>
+                    <div className="text-white/60">Communities</div>
+                    {realTimeMetrics && (
+                      <div className="text-xs text-orange-400">
+                        {Math.round(realTimeMetrics.communityEngagement)}% engaged
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="mt-3 pt-3 border-t border-white/10">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-white/60">Carbon Reduced</span>
+                    <span className="text-green-400 font-medium">
+                      {realTimeMetrics ?
+                        (sustainabilityData.impactMetrics.carbonFootprintReduced + realTimeMetrics.carbonFootprintReduction).toLocaleString() :
+                        sustainabilityData.impactMetrics.carbonFootprintReduced.toLocaleString()
+                      } tons CO₂
+                    </span>
+                  </div>
+                  {realTimeMetrics && (
+                    <div className="flex items-center justify-between text-xs mt-1">
+                      <span className="text-white/60">Overall Score</span>
+                      <span className="text-blue-400 font-medium">
+                        {Math.round(realTimeMetrics.sustainabilityScore)}%
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Resilience Index Display */}
         {resilienceResults && (
@@ -205,7 +346,7 @@ const EnhancedMainDashboard: React.FC = () => {
                   </div>
                   <div className="text-white/60 text-sm">Overall Resilience Score</div>
                 </div>
-                
+
                 <div className="grid grid-cols-2 gap-3 text-sm">
                   <div className="text-center">
                     <div className="text-lg font-semibold text-blue-400">
@@ -351,6 +492,272 @@ const EnhancedMainDashboard: React.FC = () => {
     </div>
   );
 
+  const SustainabilityDashboard = () => (
+    <div className="space-y-6">
+      {/* Sustainability Overview Cards */}
+      {sustainabilityData?.impactMetrics && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <Card className="glass border-white/10">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-white/60">Sustainable Jobs</p>
+                  <p className="text-2xl font-bold text-green-400">
+                    {sustainabilityData.impactMetrics.jobsCreated.toLocaleString()}
+                  </p>
+                </div>
+                <Briefcase className="h-8 w-8 text-green-400" />
+              </div>
+              <div className="mt-2">
+                <Badge className="bg-green-100 text-green-800">+15% this month</Badge>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="glass border-white/10">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-white/60">Cultural Practices</p>
+                  <p className="text-2xl font-bold text-purple-400">
+                    {sustainabilityData.impactMetrics.culturalPracticesDocumented}
+                  </p>
+                </div>
+                <Heart className="h-8 w-8 text-purple-400" />
+              </div>
+              <div className="mt-2">
+                <Badge className="bg-purple-100 text-purple-800">12 urgent cases</Badge>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="glass border-white/10">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-white/60">Supply Chains</p>
+                  <p className="text-2xl font-bold text-blue-400">
+                    {sustainabilityData.impactMetrics.supplyChainTransparencyImproved}
+                  </p>
+                </div>
+                <Building className="h-8 w-8 text-blue-400" />
+              </div>
+              <div className="mt-2">
+                <Badge className="bg-blue-100 text-blue-800">78% transparency</Badge>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="glass border-white/10">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-white/60">Communities</p>
+                  <p className="text-2xl font-bold text-orange-400">
+                    {sustainabilityData.impactMetrics.communitiesSupported}
+                  </p>
+                </div>
+                <Users className="h-8 w-8 text-orange-400" />
+              </div>
+              <div className="mt-2">
+                <Badge className="bg-orange-100 text-orange-800">Global reach</Badge>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* 3D Sustainability Visualization */}
+      <Card className="glass border-white/10">
+        <CardHeader>
+          <CardTitle className="text-white flex items-center gap-2">
+            <Globe className="h-5 w-5 text-blue-400" />
+            Global Sustainability Impact
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="h-96 relative">
+            <SustainabilityGlobe3D />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Job Opportunities Widget */}
+        {sustainabilityData?.jobRecommendations && (
+          <Card className="glass border-white/10">
+            <CardHeader>
+              <CardTitle className="text-white flex items-center gap-2">
+                <Briefcase className="h-5 w-5 text-green-400" />
+                Latest Sustainable Jobs
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {sustainabilityData.jobRecommendations.map((job: any, index: number) => (
+                  <div key={index} className="border border-white/10 rounded-lg p-3">
+                    <div className="flex items-start justify-between mb-2">
+                      <div>
+                        <h4 className="text-white font-medium text-sm">{job.title}</h4>
+                        <p className="text-white/60 text-xs">{job.companyInfo.name}</p>
+                      </div>
+                      <Badge className="bg-green-100 text-green-800 text-xs">
+                        {Math.round(parseFloat(job.sustainabilityScore) * 100)}%
+                      </Badge>
+                    </div>
+                    <div className="flex items-center gap-4 text-xs text-white/60">
+                      <span>{job.location}</span>
+                      <span>{job.jobType}</span>
+                      <span>${parseInt(job.salaryMin).toLocaleString()}+</span>
+                    </div>
+                  </div>
+                ))}
+                <Button className="w-full mt-3 bg-green-600 hover:bg-green-700">
+                  View All Jobs
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Cultural Heritage Widget */}
+        {sustainabilityData?.culturalPractices && (
+          <Card className="glass border-white/10">
+            <CardHeader>
+              <CardTitle className="text-white flex items-center gap-2">
+                <Heart className="h-5 w-5 text-purple-400" />
+                Cultural Heritage Status
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {sustainabilityData.culturalPractices.map((practice: any, index: number) => (
+                  <div key={index} className="border border-white/10 rounded-lg p-3">
+                    <div className="flex items-start justify-between mb-2">
+                      <div>
+                        <h4 className="text-white font-medium text-sm">{practice.name}</h4>
+                        <p className="text-white/60 text-xs">{practice.originRegion}</p>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        {practice.preservationStatus === 'endangered' && (
+                          <AlertTriangle className="h-4 w-4 text-red-400" />
+                        )}
+                        {practice.preservationStatus === 'vulnerable' && (
+                          <TrendingUp className="h-4 w-4 text-yellow-400" />
+                        )}
+                        {practice.preservationStatus === 'stable' && (
+                          <Shield className="h-4 w-4 text-green-400" />
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-white/60">
+                        {practice.knowledgeHolders.length} knowledge holders
+                      </span>
+                      <Badge
+                        className={`text-xs ${
+                          practice.preservationStatus === 'endangered' ? 'bg-red-100 text-red-800' :
+                          practice.preservationStatus === 'vulnerable' ? 'bg-yellow-100 text-yellow-800' :
+                          'bg-green-100 text-green-800'
+                        }`}
+                      >
+                        {practice.preservationStatus}
+                      </Badge>
+                    </div>
+                  </div>
+                ))}
+                <Button className="w-full mt-3 bg-purple-600 hover:bg-purple-700">
+                  View Heritage Dashboard
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+      </div>
+
+      {/* Economic Equity Overview */}
+      {sustainabilityData?.economicEquity && (
+        <Card className="glass border-white/10">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center gap-2">
+              <DollarSign className="h-5 w-5 text-blue-400" />
+              Economic Equity Metrics
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-blue-400 mb-1">
+                  {sustainabilityData.economicEquity.equityMetrics.overallEquityScore}%
+                </div>
+                <div className="text-white/60 text-sm">Overall Equity Score</div>
+                <Progress
+                  value={sustainabilityData.economicEquity.equityMetrics.overallEquityScore}
+                  className="mt-2"
+                />
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-green-400 mb-1">
+                  {sustainabilityData.economicEquity.equityMetrics.wageTransparencyScore}%
+                </div>
+                <div className="text-white/60 text-sm">Wage Transparency</div>
+                <Progress
+                  value={sustainabilityData.economicEquity.equityMetrics.wageTransparencyScore}
+                  className="mt-2"
+                />
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-purple-400 mb-1">
+                  {sustainabilityData.economicEquity.equityMetrics.localSupplierPercentage}%
+                </div>
+                <div className="text-white/60 text-sm">Local Suppliers</div>
+                <Progress
+                  value={sustainabilityData.economicEquity.equityMetrics.localSupplierPercentage}
+                  className="mt-2"
+                />
+              </div>
+            </div>
+            <div className="mt-6 flex gap-4">
+              <Button className="flex-1 bg-blue-600 hover:bg-blue-700">
+                View Equity Dashboard
+              </Button>
+              <Button variant="outline" className="flex-1 border-white/20 text-white hover:bg-white/10">
+                Generate Report
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Quick Actions */}
+      <Card className="glass border-white/10">
+        <CardHeader>
+          <CardTitle className="text-white flex items-center gap-2">
+            <Target className="h-5 w-5 text-orange-400" />
+            Quick Actions
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Button className="bg-green-600 hover:bg-green-700 flex items-center gap-2">
+              <Briefcase className="h-4 w-4" />
+              Post Sustainable Job
+            </Button>
+            <Button className="bg-purple-600 hover:bg-purple-700 flex items-center gap-2">
+              <Heart className="h-4 w-4" />
+              Document Culture
+            </Button>
+            <Button className="bg-blue-600 hover:bg-blue-700 flex items-center gap-2">
+              <Building className="h-4 w-4" />
+              Analyze Supply Chain
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+
   return (
     <motion.div
       variants={containerVariants}
@@ -363,7 +770,9 @@ const EnhancedMainDashboard: React.FC = () => {
       
       <div className="flex-1 overflow-hidden">
         {activeView === 'overview' && <OverviewDashboard />}
-        
+
+        {activeView === 'sustainability' && <SustainabilityDashboard />}
+
         {activeView === 'energy' && (
           <div className="h-full grid grid-cols-1 xl:grid-cols-3 gap-6">
             {/* Energy Grid Metrics Panel */}
@@ -622,14 +1031,100 @@ const EnhancedMainDashboard: React.FC = () => {
         )}
       </div>
 
-      {/* Empty content for scrolling */}
-      <div className="h-screen"></div>
-      <div className="h-screen bg-gradient-to-b from-transparent to-black/10 rounded-xl mb-6"></div>
-      <div className="h-screen bg-gradient-to-b from-black/10 to-transparent rounded-xl mb-6"></div>
+      {/* Scroll Indicator */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 2 }}
+        className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50 flex flex-col items-center"
+      >
+        <motion.div
+          animate={{ y: [0, 10, 0] }}
+          transition={{ duration: 2, repeat: Infinity }}
+          className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-full p-3 mb-2"
+        >
+          <i className="fas fa-chevron-down text-white/70 text-lg"></i>
+        </motion.div>
+        <p className="text-white/60 text-sm">Scroll to explore more</p>
+      </motion.div>
+
+      {/* Extended content for scrolling */}
+      <div className="h-screen flex items-center justify-center">
+        <div className="glass p-8 rounded-2xl max-w-2xl mx-4 text-center">
+          <h3 className="text-2xl font-bold text-white mb-4">🌍 Climate Action Hub</h3>
+          <p className="text-white/80 mb-6">
+            Explore comprehensive sustainability solutions, track environmental impact,
+            and connect with green job opportunities in your area.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="bg-white/10 p-4 rounded-xl">
+              <i className="fas fa-leaf text-green-400 text-2xl mb-2"></i>
+              <h4 className="text-white font-semibold">Green Jobs</h4>
+              <p className="text-white/70 text-sm">Find sustainable careers</p>
+            </div>
+            <div className="bg-white/10 p-4 rounded-xl">
+              <i className="fas fa-globe text-blue-400 text-2xl mb-2"></i>
+              <h4 className="text-white font-semibold">Climate Data</h4>
+              <p className="text-white/70 text-sm">Real-time monitoring</p>
+            </div>
+            <div className="bg-white/10 p-4 rounded-xl">
+              <i className="fas fa-users text-purple-400 text-2xl mb-2"></i>
+              <h4 className="text-white font-semibold">Community</h4>
+              <p className="text-white/70 text-sm">Connect & collaborate</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="h-screen bg-gradient-to-b from-transparent via-blue-900/20 to-purple-900/20 rounded-xl mb-6 flex items-center justify-center">
+        <div className="glass p-8 rounded-2xl max-w-2xl mx-4 text-center">
+          <h3 className="text-2xl font-bold text-white mb-4">🚀 AI-Powered Insights</h3>
+          <p className="text-white/80 mb-6">
+            Our advanced AI algorithms analyze environmental data to provide
+            personalized recommendations for sustainable living and climate action.
+          </p>
+          <div className="bg-white/10 p-6 rounded-xl">
+            <div className="flex items-center justify-center mb-4">
+              <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                <i className="fas fa-brain text-white text-2xl"></i>
+              </div>
+            </div>
+            <h4 className="text-white font-semibold mb-2">Smart Recommendations</h4>
+            <p className="text-white/70">Get personalized climate action suggestions based on your location and lifestyle</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="h-screen bg-gradient-to-b from-purple-900/20 via-pink-900/20 to-transparent rounded-xl mb-6 flex items-center justify-center">
+        <div className="glass p-8 rounded-2xl max-w-2xl mx-4 text-center">
+          <h3 className="text-2xl font-bold text-white mb-4">📊 Impact Tracking</h3>
+          <p className="text-white/80 mb-6">
+            Monitor your environmental impact and see how your actions contribute
+            to global sustainability goals.
+          </p>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-green-500/20 p-4 rounded-xl border border-green-500/30">
+              <h4 className="text-green-400 font-semibold text-lg">Carbon Saved</h4>
+              <p className="text-white text-2xl font-bold">2.4 tons</p>
+            </div>
+            <div className="bg-blue-500/20 p-4 rounded-xl border border-blue-500/30">
+              <h4 className="text-blue-400 font-semibold text-lg">Energy Saved</h4>
+              <p className="text-white text-2xl font-bold">1,250 kWh</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="h-64 flex items-center justify-center">
         <div className="text-center text-white/50">
-          <i className="fas fa-arrow-up text-2xl mb-2"></i>
+          <motion.div
+            animate={{ y: [0, -10, 0] }}
+            transition={{ duration: 2, repeat: Infinity }}
+          >
+            <i className="fas fa-arrow-up text-2xl mb-2"></i>
+          </motion.div>
           <p>Scroll up to return to dashboard</p>
+          <p className="text-xs mt-2 text-white/30">Use the scrollbar on the right for quick navigation</p>
         </div>
       </div>
     </motion.div>

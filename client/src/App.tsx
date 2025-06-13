@@ -8,6 +8,7 @@ import EnhancedMainDashboard from "./components/Dashboard/EnhancedMainDashboard"
 import Sidebar from "./components/Navigation/Sidebar";
 import Header from "./components/Navigation/Header";
 import CustomScrollbar from "./components/Navigation/CustomScrollbar";
+// import ScrollProgress from "./components/Navigation/ScrollProgress";
 
 import CommunityVulnerability from "./components/EnergyAccess/CommunityVulnerability";
 import EnergyDistribution from "./components/EnergyAccess/EnergyDistribution";
@@ -15,6 +16,11 @@ import ActionTracker from "./components/ClimateAction/ActionTracker";
 import ProgressMonitor from "./components/ClimateAction/ProgressMonitor";
 import Scene3D from "./components/3D/Scene3D";
 import NotFound from "./pages/not-found";
+
+// Sustainability Components
+import JobMarketplaceDashboard from "./components/Sustainability/JobMarketplaceDashboard";
+import CulturalHeritageDashboard from "./components/Sustainability/CulturalHeritageDashboard";
+import EconomicEquityDashboard from "./components/Sustainability/EconomicEquityDashboard";
 import { useClimateData } from "./lib/stores/useClimateData";
 import { useEnergyData } from "./lib/stores/useEnergyData";
 import { use3DScene } from "./lib/stores/use3DScene";
@@ -108,19 +114,18 @@ function App() {
     initializeApp();
   }, [initializeClimateData, initializeEnergyData]);
 
-  // Initialize comprehensive scroll prevention
+  // Initialize scroll prevention only for 3D canvas
   useEffect(() => {
-    // Lock viewport to prevent any canvas-related scrolling
-    scrollPrevention.lockViewport();
-
-    // Apply prevention to all existing canvases
-    scrollPrevention.preventAllCanvasScrolling();
+    // Only prevent scrolling on 3D canvas, not the entire page
+    if (show3D) {
+      scrollPrevention.preventAllCanvasScrolling();
+    }
 
     // Cleanup on unmount
     return () => {
       scrollPrevention.cleanup();
     };
-  }, []);
+  }, [show3D]);
 
   // Ultimate scroll prevention system
   useEffect(() => {
@@ -235,7 +240,7 @@ function App() {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen w-screen overflow-auto bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900">
+      <div className="min-h-screen w-screen bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900">
         {/* 3D Background Scene */}
         <AnimatePresence>
           {show3D && (
@@ -381,18 +386,21 @@ function App() {
           </AnimatePresence>
 
           {/* Main Content */}
-          <div className={`flex-1 flex flex-col transition-all duration-300 ${
+          <div className={`flex-1 flex flex-col min-h-screen transition-all duration-300 ${
             sidebarOpen ? 'ml-80' : 'ml-0'
           }`}>
             {/* Header */}
-            <Header 
+            <Header
               onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
               onToggle3D={toggle3D}
               show3D={show3D}
             />
 
             {/* Content Area */}
-            <main className="flex-1 overflow-y-auto" style={{ minHeight: '150vh' }}>
+            <main className="flex-1 overflow-y-auto overflow-x-hidden" style={{
+              scrollBehavior: 'smooth',
+              overscrollBehavior: 'contain'
+            }}>
               <Routes>
                 <Route path="/" element={<EnhancedMainDashboard />} />
                 <Route path="/dashboard" element={<EnhancedMainDashboard />} />
@@ -402,6 +410,13 @@ function App() {
                 <Route path="/climate" element={<ActionTracker />} />
                 <Route path="/climate/actions" element={<ActionTracker />} />
                 <Route path="/climate/progress" element={<ProgressMonitor />} />
+
+                {/* Sustainability Routes */}
+                <Route path="/sustainability" element={<JobMarketplaceDashboard />} />
+                <Route path="/sustainability/jobs" element={<JobMarketplaceDashboard />} />
+                <Route path="/sustainability/cultural" element={<CulturalHeritageDashboard />} />
+                <Route path="/sustainability/equity" element={<EconomicEquityDashboard />} />
+
                 <Route path="*" element={<NotFound />} />
               </Routes>
 
@@ -416,6 +431,9 @@ function App() {
 
         {/* Custom Scrollbar */}
         <CustomScrollbar />
+
+        {/* Scroll Progress Indicator - Temporarily disabled */}
+        {/* <ScrollProgress /> */}
       </div>
     </ErrorBoundary>
   );
