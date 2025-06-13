@@ -141,84 +141,84 @@ const ParticleSystem: React.FC<ParticleSystemProps> = ({
     });
   }, [intensity]);
 
-  // Animation loop
-  useFrame((state) => {
-    if (particlesRef.current) {
-      const positions = particlesRef.current.geometry.attributes.position.array as Float32Array;
-      const colors = particlesRef.current.geometry.attributes.color.array as Float32Array;
-      const ages = particleData.ages;
-      const lifetimes = particleData.lifetimes;
-      const deltaTime = state.clock.getDelta();
-      
-      // Update particle material time uniform
-      if (particleMaterial.uniforms.time) {
-        particleMaterial.uniforms.time.value = state.clock.elapsedTime;
-      }
-      
-      for (let i = 0; i < count; i++) {
-        const i3 = i * 3;
-        
-        // Update age
-        ages[i] += deltaTime;
-        
-        // Reset particle if it's too old
-        if (ages[i] > lifetimes[i]) {
-          ages[i] = 0;
-          
-          // Reset position
-          positions[i3] = (Math.random() - 0.5) * bounds[0];
-          positions[i3 + 1] = (Math.random() - 0.5) * bounds[1];
-          positions[i3 + 2] = (Math.random() - 0.5) * bounds[2];
-        } else {
-          // Update positions
-          positions[i3] += particleData.velocities[i3];
-          positions[i3 + 1] += particleData.velocities[i3 + 1];
-          positions[i3 + 2] += particleData.velocities[i3 + 2];
-          
-          // Add some physics based on type
-          if (type === 'energy') {
-            // Energy particles are attracted to grid points
-            const centerForce = 0.0001;
-            positions[i3] += -positions[i3] * centerForce;
-            positions[i3 + 2] += -positions[i3 + 2] * centerForce;
-          } else if (type === 'carbon') {
-            // Carbon particles rise and spread
-            particleData.velocities[i3] += (Math.random() - 0.5) * 0.0001;
-            particleData.velocities[i3 + 2] += (Math.random() - 0.5) * 0.0001;
-          } else if (type === 'climate') {
-            // Climate particles follow wind patterns
-            const windForce = Math.sin(state.clock.elapsedTime * 0.5 + i * 0.1) * 0.0002;
-            particleData.velocities[i3] += windForce;
-            particleData.velocities[i3 + 2] += Math.cos(state.clock.elapsedTime * 0.3 + i * 0.1) * 0.0002;
-          }
-          
-          // Update color intensity based on age
-          const ageRatio = ages[i] / lifetimes[i];
-          const colorIntensity = Math.sin(ageRatio * Math.PI);
-          
-          colors[i3] = particleData.colors[i3] * colorIntensity;
-          colors[i3 + 1] = particleData.colors[i3 + 1] * colorIntensity;
-          colors[i3 + 2] = particleData.colors[i3 + 2] * colorIntensity;
-        }
-        
-        // Boundary checks
-        if (Math.abs(positions[i3]) > bounds[0] / 2) {
-          particleData.velocities[i3] *= -0.5;
-        }
-        if (Math.abs(positions[i3 + 1]) > bounds[1] / 2) {
-          particleData.velocities[i3 + 1] *= -0.5;
-        }
-        if (Math.abs(positions[i3 + 2]) > bounds[2] / 2) {
-          particleData.velocities[i3 + 2] *= -0.5;
-        }
-      }
-      
-      // Mark attributes for update
-      particlesRef.current.geometry.attributes.position.needsUpdate = true;
-      particlesRef.current.geometry.attributes.color.needsUpdate = true;
-      particlesRef.current.geometry.attributes.age.needsUpdate = true;
-    }
-  });
+  // Animation loop - disabled to prevent auto-zoom issues
+  // useFrame((state) => {
+  //   if (particlesRef.current) {
+  //     const positions = particlesRef.current.geometry.attributes.position.array as Float32Array;
+  //     const colors = particlesRef.current.geometry.attributes.color.array as Float32Array;
+  //     const ages = particleData.ages;
+  //     const lifetimes = particleData.lifetimes;
+  //     const deltaTime = state.clock.getDelta();
+  //
+  //     // Update particle material time uniform
+  //     if (particleMaterial.uniforms.time) {
+  //       particleMaterial.uniforms.time.value = state.clock.elapsedTime;
+  //     }
+  //
+  //     for (let i = 0; i < count; i++) {
+  //       const i3 = i * 3;
+  //
+  //       // Update age
+  //       ages[i] += deltaTime;
+  //
+  //       // Reset particle if it's too old
+  //       if (ages[i] > lifetimes[i]) {
+  //         ages[i] = 0;
+  //
+  //         // Reset position
+  //         positions[i3] = (Math.random() - 0.5) * bounds[0];
+  //         positions[i3 + 1] = (Math.random() - 0.5) * bounds[1];
+  //         positions[i3 + 2] = (Math.random() - 0.5) * bounds[2];
+  //       } else {
+  //         // Update positions
+  //         positions[i3] += particleData.velocities[i3];
+  //         positions[i3 + 1] += particleData.velocities[i3 + 1];
+  //         positions[i3 + 2] += particleData.velocities[i3 + 2];
+  //
+  //         // Add some physics based on type
+  //         if (type === 'energy') {
+  //           // Energy particles are attracted to grid points
+  //           const centerForce = 0.0001;
+  //           positions[i3] += -positions[i3] * centerForce;
+  //           positions[i3 + 2] += -positions[i3 + 2] * centerForce;
+  //         } else if (type === 'carbon') {
+  //           // Carbon particles rise and spread
+  //           particleData.velocities[i3] += (Math.random() - 0.5) * 0.0001;
+  //           particleData.velocities[i3 + 2] += (Math.random() - 0.5) * 0.0001;
+  //         } else if (type === 'climate') {
+  //           // Climate particles follow wind patterns
+  //           const windForce = Math.sin(state.clock.elapsedTime * 0.5 + i * 0.1) * 0.0002;
+  //           particleData.velocities[i3] += windForce;
+  //           particleData.velocities[i3 + 2] += Math.cos(state.clock.elapsedTime * 0.3 + i * 0.1) * 0.0002;
+  //         }
+  //
+  //         // Update color intensity based on age
+  //         const ageRatio = ages[i] / lifetimes[i];
+  //         const colorIntensity = Math.sin(ageRatio * Math.PI);
+  //
+  //         colors[i3] = particleData.colors[i3] * colorIntensity;
+  //         colors[i3 + 1] = particleData.colors[i3 + 1] * colorIntensity;
+  //         colors[i3 + 2] = particleData.colors[i3 + 2] * colorIntensity;
+  //       }
+  //
+  //       // Boundary checks
+  //       if (Math.abs(positions[i3]) > bounds[0] / 2) {
+  //         particleData.velocities[i3] *= -0.5;
+  //       }
+  //       if (Math.abs(positions[i3 + 1]) > bounds[1] / 2) {
+  //         particleData.velocities[i3 + 1] *= -0.5;
+  //       }
+  //       if (Math.abs(positions[i3 + 2]) > bounds[2] / 2) {
+  //         particleData.velocities[i3 + 2] *= -0.5;
+  //       }
+  //     }
+  //
+  //     // Mark attributes for update
+  //     particlesRef.current.geometry.attributes.position.needsUpdate = true;
+  //     particlesRef.current.geometry.attributes.color.needsUpdate = true;
+  //     particlesRef.current.geometry.attributes.age.needsUpdate = true;
+  //   }
+  // });
 
   return (
     <points ref={particlesRef} material={particleMaterial}>

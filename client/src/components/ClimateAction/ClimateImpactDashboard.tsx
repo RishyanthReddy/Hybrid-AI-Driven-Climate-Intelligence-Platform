@@ -1,9 +1,6 @@
 import React, { useState, useMemo } from 'react';
-import { Canvas } from '@react-three/fiber';
-import { Suspense } from 'react';
 import { motion } from 'framer-motion';
-import CarbonEmissionParticles from '../3D/CarbonEmissionParticles';
-import ClimateHeatmap from '../3D/ClimateHeatmap';
+import ZoomProof3DVisualization from '../3D/ZoomProof3DVisualization';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
 import { Progress } from '../ui/progress';
@@ -18,12 +15,14 @@ interface ClimateImpactDashboardProps {
     type: 'factory' | 'vehicle' | 'building';
   }>;
   show3DParticles: boolean;
+  onToggleParticles?: (show: boolean) => void;
 }
 
 const ClimateImpactDashboard: React.FC<ClimateImpactDashboardProps> = ({
   climateData,
   emissionSources,
-  show3DParticles
+  show3DParticles,
+  onToggleParticles
 }) => {
   const [activeTab, setActiveTab] = useState<'overview' | 'emissions' | 'temperature' | 'risks'>('overview');
 
@@ -296,6 +295,50 @@ const ClimateImpactDashboard: React.FC<ClimateImpactDashboardProps> = ({
                   </div>
                 </CardContent>
               </Card>
+
+              {/* Emission Sources Chart */}
+              <Card className="glass border-white/10">
+                <CardHeader>
+                  <CardTitle className="text-white">Emission Sources Distribution</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {/* Pie Chart Representation */}
+                    <div className="relative w-24 h-24 mx-auto">
+                      <div className="absolute inset-0 rounded-full bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500 opacity-80"></div>
+                      <div className="absolute inset-2 rounded-full bg-black/80 flex items-center justify-center">
+                        <div className="text-center">
+                          <div className="text-white font-semibold text-sm">{emissionSources.length}</div>
+                          <div className="text-white/60 text-xs">Sources</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Source Breakdown */}
+                    <div className="space-y-2">
+                      {['factory', 'building', 'vehicle'].map((type) => {
+                        const count = emissionSources.filter(s => s.type === type).length;
+                        const percentage = emissionSources.length > 0 ? (count / emissionSources.length) * 100 : 0;
+                        const color = type === 'factory' ? 'bg-red-400' :
+                                     type === 'building' ? 'bg-orange-400' : 'bg-yellow-400';
+
+                        return (
+                          <div key={type} className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <div className={`w-3 h-3 rounded ${color}`}></div>
+                              <span className="text-white/80 capitalize text-sm">{type}s</span>
+                            </div>
+                            <div className="text-right">
+                              <div className="text-white font-semibold text-sm">{count}</div>
+                              <div className="text-white/60 text-xs">{percentage.toFixed(0)}%</div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </motion.div>
           )}
 
@@ -317,7 +360,28 @@ const ClimateImpactDashboard: React.FC<ClimateImpactDashboardProps> = ({
                       </div>
                       <p className="text-white/60">Above pre-industrial levels</p>
                     </div>
-                    
+
+                    {/* Temperature Trend Chart */}
+                    <div className="bg-white/5 p-3 rounded">
+                      <div className="text-white/80 text-sm mb-2">Temperature Trend (Last 10 Years)</div>
+                      <div className="flex items-end justify-between h-16 gap-1">
+                        {Array.from({ length: 10 }, (_, i) => {
+                          const height = 20 + (i * 3) + Math.random() * 10;
+                          const year = 2014 + i;
+                          const isCurrentYear = year === 2023;
+                          return (
+                            <div key={i} className="flex flex-col items-center flex-1">
+                              <div
+                                className={`w-full ${isCurrentYear ? 'bg-red-400' : 'bg-orange-400/70'} rounded-t`}
+                                style={{ height: `${height}px` }}
+                              ></div>
+                              <div className="text-xs text-white/60 mt-1">{year}</div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
                     <div className="space-y-2">
                       <div className="flex justify-between">
                         <span className="text-white/80">1.5°C Target</span>
@@ -331,6 +395,41 @@ const ClimateImpactDashboard: React.FC<ClimateImpactDashboardProps> = ({
                           {climateMetrics.temperatureChange > 2.0 ? 'Exceeded' : 'Approaching'}
                         </span>
                       </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* CO2 Concentration Chart */}
+              <Card className="glass border-white/10">
+                <CardHeader>
+                  <CardTitle className="text-white">CO₂ Concentration Trend</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-orange-400">
+                        {climateMetrics.co2Level.toFixed(0)} ppm
+                      </div>
+                      <div className="text-white/60 text-sm">Current Level</div>
+                    </div>
+
+                    {/* CO2 Trend Chart */}
+                    <div className="bg-white/5 p-3 rounded">
+                      <div className="flex items-end justify-between h-12 gap-1">
+                        {Array.from({ length: 12 }, (_, i) => {
+                          const baseHeight = 15 + (i * 1.5);
+                          const height = baseHeight + Math.sin(i * 0.5) * 3;
+                          return (
+                            <div
+                              key={i}
+                              className="bg-orange-400/70 rounded-t flex-1"
+                              style={{ height: `${height}px` }}
+                            ></div>
+                          );
+                        })}
+                      </div>
+                      <div className="text-xs text-white/60 mt-1 text-center">Monthly readings</div>
                     </div>
                   </div>
                 </CardContent>
@@ -375,43 +474,129 @@ const ClimateImpactDashboard: React.FC<ClimateImpactDashboardProps> = ({
 
         {/* Right Panel - 3D Visualization */}
         <div className="xl:col-span-2 bg-black/20 rounded-xl overflow-hidden relative">
-          {/* Visualization Controls */}
-          <div className="absolute top-4 right-4 z-10 flex gap-2">
-            <Button
-              size="sm"
-              variant="outline"
-              className="bg-white/10 border-white/20 text-white hover:bg-white/20"
-              onClick={() => {/* Toggle view mode */}}
-            >
-              <i className="fas fa-eye mr-2"></i>
-              {activeTab === 'overview' ? 'Heatmap' : activeTab}
-            </Button>
+          {/* Climate Visualization with Particle Control */}
+          <div className="h-full relative">
+            {/* Header with Controls */}
+            <div className="p-4 border-b border-white/10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+              <div className="flex-1">
+                <h3 className="text-white font-semibold flex items-center gap-2">
+                  <i className="fas fa-globe-americas text-red-400"></i>
+                  Climate Impact Heatmap
+                </h3>
+                <p className="text-white/60 text-sm">Global environmental monitoring with emission tracking</p>
+              </div>
+              <div className="flex gap-2 shrink-0">
+                <Button
+                  size="sm"
+                  variant={show3DParticles ? "default" : "outline"}
+                  className={`${
+                    show3DParticles
+                      ? 'bg-red-600 hover:bg-red-700'
+                      : 'bg-white/10 border-white/20 hover:bg-white/20'
+                  } text-white text-xs px-3 py-1 whitespace-nowrap`}
+                  onClick={() => {
+                    onToggleParticles?.(!show3DParticles);
+                  }}
+                >
+                  <i className={`fas fa-${show3DParticles ? 'eye-slash' : 'eye'} mr-1`}></i>
+                  {show3DParticles ? 'Hide' : 'Show'}
+                </Button>
+              </div>
+            </div>
+
+            {/* 3D Climate Visualization */}
+            <div className="h-[500px] bg-gradient-to-br from-red-900/20 to-orange-900/20">
+              <ZoomProof3DVisualization
+                type="climate"
+                showParticles={show3DParticles}
+                emissionSources={emissionSources}
+                className="w-full h-full"
+              />
+            </div>
+
+            {/* Climate Data Overlay */}
+            <div className="absolute bottom-4 left-4 right-4">
+              <div className="grid grid-cols-4 gap-2 text-xs">
+                <div className="bg-black/80 p-2 rounded text-center backdrop-blur-sm">
+                  <div className={`font-semibold ${getRiskColor(climateMetrics.riskLevel).split(' ')[0]}`}>
+                    {climateMetrics.riskLevel.toUpperCase()}
+                  </div>
+                  <div className="text-white/70">Risk Level</div>
+                </div>
+                <div className="bg-black/80 p-2 rounded text-center backdrop-blur-sm">
+                  <div className="text-orange-400 font-semibold">{climateMetrics.co2Level.toFixed(0)} ppm</div>
+                  <div className="text-white/70">CO₂ Level</div>
+                </div>
+                <div className="bg-black/80 p-2 rounded text-center backdrop-blur-sm">
+                  <div className="text-blue-400 font-semibold">{climateMetrics.seaLevelRise.toFixed(1)} cm</div>
+                  <div className="text-white/70">Sea Level Rise</div>
+                </div>
+                <div className="bg-black/80 p-2 rounded text-center backdrop-blur-sm">
+                  <div className="text-purple-400 font-semibold">{climateMetrics.carbonBudgetUsed.toFixed(1)}%</div>
+                  <div className="text-white/70">Carbon Budget</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Emission Sources Indicator */}
+            {show3DParticles && (
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                className="absolute top-24 right-4 glass p-3 rounded-lg max-w-xs z-20"
+              >
+                <div className="text-white text-sm">
+                  <div className="font-semibold mb-2 flex items-center gap-2">
+                    <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
+                    Active Emission Sources
+                  </div>
+                  <div className="space-y-1 text-xs">
+                    <div className="flex justify-between">
+                      <span className="text-white/70">Factories:</span>
+                      <span className="text-red-400 font-semibold">{emissionSources.filter(s => s.type === 'factory').length}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-white/70">Buildings:</span>
+                      <span className="text-orange-400 font-semibold">{emissionSources.filter(s => s.type === 'building').length}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-white/70">Vehicles:</span>
+                      <span className="text-yellow-400 font-semibold">{emissionSources.filter(s => s.type === 'vehicle').length}</span>
+                    </div>
+                  </div>
+                  <div className="mt-2 pt-2 border-t border-white/20">
+                    <div className="text-white/60 text-xs">
+                      Total Particles: <span className="text-white font-semibold">500</span>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {/* No Emissions Message */}
+            {!show3DParticles && (
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                className="absolute top-24 right-4 glass p-3 rounded-lg max-w-xs z-20"
+              >
+                <div className="text-white text-sm">
+                  <div className="font-semibold mb-1 flex items-center gap-2">
+                    <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                    Emissions Hidden
+                  </div>
+                  <div className="text-white/60 text-xs">
+                    Particle visualization disabled for cleaner view
+                  </div>
+                </div>
+              </motion.div>
+            )}
           </div>
 
-          {/* 3D Canvas */}
-          <Canvas camera={{ position: [0, 10, 15], fov: 60 }}>
-            <Suspense fallback={
-              <mesh>
-                <boxGeometry args={[1, 1, 1]} />
-                <meshStandardMaterial color="#4facfe" wireframe />
-              </mesh>
-            }>
-              <ClimateHeatmap data={climateData} interactive={true} />
-              {show3DParticles && (
-                <CarbonEmissionParticles
-                  emissionSources={emissionSources}
-                  animationSpeed={1.5}
-                />
-              )}
-            </Suspense>
-            <ambientLight intensity={0.6} />
-            <directionalLight position={[10, 10, 5]} intensity={1} />
-            <pointLight position={[0, 15, 0]} intensity={0.5} color="#ff6b6b" />
-            <fog attach="fog" args={['#1a1a2e', 10, 50]} />
-          </Canvas>
-
           {/* Overlay Information */}
-          <div className="absolute bottom-4 left-4 glass p-3 rounded-lg max-w-xs">
+          <div className="absolute bottom-20 left-4 glass p-3 rounded-lg max-w-xs z-10">
             <div className="text-white text-sm">
               <div className="font-semibold mb-1">Climate Visualization</div>
               <div className="text-white/70 text-xs">

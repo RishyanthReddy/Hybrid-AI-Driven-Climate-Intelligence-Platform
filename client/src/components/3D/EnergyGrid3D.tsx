@@ -59,27 +59,28 @@ const EnergyGrid3D: React.FC<EnergyGrid3DProps> = ({ data, interactive = false }
     return { nodes, connections };
   }, [data]);
 
-  // Animation
-  useFrame((state) => {
-    if (groupRef.current) {
-      groupRef.current.rotation.y += 0.002;
-    }
-  });
+  // Animation - disabled to prevent auto-zoom issues
+  // useFrame((state) => {
+  //   if (groupRef.current) {
+  //     groupRef.current.rotation.y += 0.002;
+  //   }
+  // });
 
   // Energy Node Component
   const EnergyNode: React.FC<{ node: any; index: number }> = ({ node, index }) => {
     const meshRef = useRef<THREE.Mesh>(null);
     const [hovered, setHovered] = React.useState(false);
     
-    useFrame((state) => {
-      if (meshRef.current) {
-        meshRef.current.position.y = node.position[1] + Math.sin(state.clock.elapsedTime * 2 + index) * 0.1;
-        
-        // Pulsing effect based on energy level
-        const scale = 1 + (node.energyLevel / 100) * 0.5;
-        meshRef.current.scale.setScalar(scale);
-      }
-    });
+    // Disabled animation to prevent auto-zoom issues
+    // useFrame((state) => {
+    //   if (meshRef.current) {
+    //     meshRef.current.position.y = node.position[1] + Math.sin(state.clock.elapsedTime * 2 + index) * 0.1;
+    //
+    //     // Pulsing effect based on energy level
+    //     const scale = 1 + (node.energyLevel / 100) * 0.5;
+    //     meshRef.current.scale.setScalar(scale);
+    //   }
+    // });
 
     const nodeColor = useMemo(() => {
       if (node.nodeType === 'generator') {
@@ -148,12 +149,13 @@ const EnergyGrid3D: React.FC<EnergyGrid3DProps> = ({ data, interactive = false }
       return curve.getPoints(20);
     }, [connection]);
 
-    useFrame((state) => {
-      if (materialRef.current) {
-        const intensity = 0.3 + Math.sin(state.clock.elapsedTime * 3 + index) * 0.2;
-        materialRef.current.opacity = intensity;
-      }
-    });
+    // Disabled animation to prevent auto-zoom issues
+    // useFrame((state) => {
+    //   if (materialRef.current) {
+    //     const intensity = 0.3 + Math.sin(state.clock.elapsedTime * 3 + index) * 0.2;
+    //     materialRef.current.opacity = intensity;
+    //   }
+    // });
 
     return (
       <Line

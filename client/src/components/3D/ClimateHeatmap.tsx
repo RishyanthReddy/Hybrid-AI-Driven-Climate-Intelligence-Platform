@@ -102,23 +102,24 @@ const ClimateHeatmap: React.FC<ClimateHeatmapProps> = ({ data, interactive = fal
     return points;
   }, []);
 
-  // Animation
-  useFrame((state) => {
-    if (groupRef.current) {
-      groupRef.current.rotation.y += 0.001;
-    }
-  });
+  // Animation - disabled to prevent auto-zoom issues
+  // useFrame((state) => {
+  //   if (groupRef.current) {
+  //     groupRef.current.rotation.y += 0.001;
+  //   }
+  // });
 
   // Data Point Component
   const ClimateDataPoint: React.FC<{ point: any; index: number }> = ({ point, index }) => {
     const meshRef = useRef<THREE.Mesh>(null);
     const [hovered, setHovered] = React.useState(false);
     
-    useFrame((state) => {
-      if (meshRef.current) {
-        meshRef.current.position.y = point.position[1] + Math.sin(state.clock.elapsedTime + index) * 0.1;
-      }
-    });
+    // Disabled data point animation to prevent auto-zoom issues
+    // useFrame((state) => {
+    //   if (meshRef.current) {
+    //     meshRef.current.position.y = point.position[1] + Math.sin(state.clock.elapsedTime + index) * 0.1;
+    //   }
+    // });
 
     const pointColor = useMemo(() => {
       const temp = point.temperature;
@@ -195,37 +196,38 @@ const ClimateHeatmap: React.FC<ClimateHeatmapProps> = ({ data, interactive = fal
       return { positions, velocities, colors, sizes };
     }, []);
 
-    useFrame(() => {
-      if (particlesRef.current) {
-        const positions = particlesRef.current.geometry.attributes.position.array as Float32Array;
-        
-        for (let i = 0; i < particleCount; i++) {
-          const i3 = i * 3;
-          
-          // Update positions
-          positions[i3] += particles.velocities[i3];
-          positions[i3 + 1] += particles.velocities[i3 + 1];
-          positions[i3 + 2] += particles.velocities[i3 + 2];
-          
-          // Reset particles that go too high
-          if (positions[i3 + 1] > 10) {
-            positions[i3] = (Math.random() - 0.5) * 20;
-            positions[i3 + 1] = 0;
-            positions[i3 + 2] = (Math.random() - 0.5) * 20;
-          }
-          
-          // Wrap around horizontally
-          if (Math.abs(positions[i3]) > 12) {
-            positions[i3] = -positions[i3] * 0.5;
-          }
-          if (Math.abs(positions[i3 + 2]) > 12) {
-            positions[i3 + 2] = -positions[i3 + 2] * 0.5;
-          }
-        }
-        
-        particlesRef.current.geometry.attributes.position.needsUpdate = true;
-      }
-    });
+    // Disabled particle animation to prevent auto-zoom issues
+    // useFrame(() => {
+    //   if (particlesRef.current) {
+    //     const positions = particlesRef.current.geometry.attributes.position.array as Float32Array;
+    //
+    //     for (let i = 0; i < particleCount; i++) {
+    //       const i3 = i * 3;
+    //
+    //       // Update positions
+    //       positions[i3] += particles.velocities[i3];
+    //       positions[i3 + 1] += particles.velocities[i3 + 1];
+    //       positions[i3 + 2] += particles.velocities[i3 + 2];
+    //
+    //       // Reset particles that go too high
+    //       if (positions[i3 + 1] > 10) {
+    //         positions[i3] = (Math.random() - 0.5) * 20;
+    //         positions[i3 + 1] = 0;
+    //         positions[i3 + 2] = (Math.random() - 0.5) * 20;
+    //       }
+    //
+    //       // Wrap around horizontally
+    //       if (Math.abs(positions[i3]) > 12) {
+    //         positions[i3] = -positions[i3] * 0.5;
+    //       }
+    //       if (Math.abs(positions[i3 + 2]) > 12) {
+    //         positions[i3 + 2] = -positions[i3 + 2] * 0.5;
+    //       }
+    //     }
+    //
+    //     particlesRef.current.geometry.attributes.position.needsUpdate = true;
+    //   }
+    // });
 
     return (
       <points ref={particlesRef}>

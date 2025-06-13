@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Canvas } from "@react-three/fiber";
-import { Suspense } from "react";
-import InteractiveEnergyGrid3D from "../3D/InteractiveEnergyGrid3D";
+import CinematicVisualization from "../3D/CinematicVisualization";
 import { useEnergyData } from "../../lib/stores/useEnergyData";
 import { useAlgorithms } from "../../lib/hooks/useAlgorithms";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
@@ -398,25 +396,9 @@ const EnergyDistribution: React.FC = () => {
         {/* 3D Visualization */}
         <motion.div variants={itemVariants} className="flex-1 relative">
           <div className="h-full">
-            <Canvas
-              camera={{ position: [0, 15, 25], fov: 60 }}
-              gl={{ antialias: true, powerPreference: "high-performance" }}
-            >
-              <Suspense fallback={null}>
-                <ambientLight intensity={0.4} />
-                <directionalLight position={[10, 10, 5]} intensity={0.8} castShadow />
-                <pointLight position={[0, 10, 0]} intensity={0.5} color="#4facfe" />
-                
-                {distributionData && (
-                  <InteractiveEnergyGrid3D 
-                    data={distributionData} 
-                    interactive={true}
-                    selectedNode={selectedNode}
-                    onNodeSelect={setSelectedNode}
-                  />
-                )}
-              </Suspense>
-            </Canvas>
+            <div className="h-full">
+              <CinematicVisualization type="energy" className="w-full h-full" />
+            </div>
           </div>
 
           {/* Overlay Controls */}

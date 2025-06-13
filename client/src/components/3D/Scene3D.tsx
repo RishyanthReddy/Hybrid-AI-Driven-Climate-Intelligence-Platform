@@ -15,12 +15,12 @@ const Scene3D: React.FC = () => {
   const { climateData } = useClimateData();
   const { energyData } = useEnergyData();
 
-  // Gentle scene rotation
-  useFrame((state) => {
-    if (sceneRef.current) {
-      sceneRef.current.rotation.y += animationSpeed * 0.001;
-    }
-  });
+  // Disabled automatic scene rotation to prevent auto-zoom issues
+  // useFrame((state) => {
+  //   if (sceneRef.current) {
+  //     sceneRef.current.rotation.y += animationSpeed * 0.001;
+  //   }
+  // });
 
   // Lighting setup
   const LightingSetup = () => (
@@ -122,15 +122,27 @@ const Scene3D: React.FC = () => {
   return (
     <>
       <OrbitControls
-        enablePan={true}
-        enableZoom={true}
-        enableRotate={true}
+        enablePan={false}
+        enableZoom={false}
+        enableRotate={false}
         minDistance={5}
         maxDistance={100}
         minPolarAngle={0}
         maxPolarAngle={Math.PI / 2}
         autoRotate={false}
-        autoRotateSpeed={0.2}
+        autoRotateSpeed={0}
+        enableDamping={false}
+        domElement={undefined}
+        listenToKeyEvents={undefined}
+        touches={{
+          ONE: 0, // Disable touch rotate
+          TWO: 0  // Disable two-finger gestures
+        }}
+        mouseButtons={{
+          LEFT: 0,   // Disable mouse rotate
+          MIDDLE: 0, // Disable middle mouse
+          RIGHT: 0   // Disable right mouse
+        }}
       />
       
       <LightingSetup />
@@ -158,31 +170,30 @@ const Scene3D: React.FC = () => {
           <ClimateHeatmap data={climateData} interactive={true} />
         )}
         
-        {/* Particle systems */}
-        <ParticleSystem
+        {/* Particle systems - disabled to prevent auto-zoom issues */}
+        {/* <ParticleSystem
           count={300}
           type="energy"
           bounds={[40, 20, 40]}
           intensity={0.8}
         />
-        
+
         <ParticleSystem
           count={200}
           type="carbon"
           bounds={[30, 25, 30]}
           intensity={0.6}
         />
-        
+
         <ParticleSystem
           count={150}
           type="climate"
           bounds={[50, 15, 50]}
           intensity={0.7}
-        />
+        /> */}
         
-        {/* Atmospheric effects */}
-        <group>
-          {/* Fog/Mist effect */}
+        {/* Atmospheric effects - disabled to prevent auto-zoom issues */}
+        {/* <group>
           <mesh position={[0, 8, 0]}>
             <sphereGeometry args={[30, 16, 16]} />
             <meshBasicMaterial
@@ -192,8 +203,7 @@ const Scene3D: React.FC = () => {
               side={THREE.BackSide}
             />
           </mesh>
-          
-          {/* Energy field visualization */}
+
           <mesh position={[0, 0, 0]}>
             <sphereGeometry args={[25, 32, 32]} />
             <meshBasicMaterial
@@ -203,7 +213,7 @@ const Scene3D: React.FC = () => {
               wireframe
             />
           </mesh>
-        </group>
+        </group> */}
       </group>
       
       {/* Post-processing effects would go here */}

@@ -36,16 +36,17 @@ const Building: React.FC<{
     config: { tension: 200, friction: 20 }
   });
 
-  useFrame((state) => {
-    if (meshRef.current && showFlow) {
-      const time = state.clock.getElapsedTime();
-      meshRef.current.material.emissive.setHSL(
-        0.3, 
-        0.5, 
-        0.1 + Math.sin(time * 2 + building.position[0]) * 0.1
-      );
-    }
-  });
+  // Disabled building animations to prevent auto-zoom issues
+  // useFrame((state) => {
+  //   if (meshRef.current && showFlow) {
+  //     const time = state.clock.getElapsedTime();
+  //     meshRef.current.material.emissive.setHSL(
+  //       0.3,
+  //       0.5,
+  //       0.1 + Math.sin(time * 2 + building.position[0]) * 0.1
+  //     );
+  //   }
+  // });
 
   const buildingColor = useMemo(() => {
     switch (building.type) {
@@ -107,13 +108,14 @@ const EnergyFlowLine: React.FC<{
 }> = ({ start, end, intensity }) => {
   const lineRef = useRef<THREE.Line>(null);
   
-  useFrame((state) => {
-    if (lineRef.current) {
-      const time = state.clock.getElapsedTime();
-      const opacity = 0.3 + Math.sin(time * 3) * 0.2;
-      lineRef.current.material.opacity = opacity * intensity;
-    }
-  });
+  // Disabled energy flow animations to prevent auto-zoom issues
+  // useFrame((state) => {
+  //   if (lineRef.current) {
+  //     const time = state.clock.getElapsedTime();
+  //     const opacity = 0.3 + Math.sin(time * 3) * 0.2;
+  //     lineRef.current.material.opacity = opacity * intensity;
+  //   }
+  // });
 
   const points = useMemo(() => {
     const curve = new THREE.CatmullRomCurve3([
@@ -154,11 +156,12 @@ const InteractiveCityGrid: React.FC<InteractiveCityGridProps> = ({
   const groupRef = useRef<THREE.Group>(null);
   const { camera } = useThree();
   
-  useFrame((state) => {
-    if (groupRef.current) {
-      groupRef.current.rotation.y += 0.001 * animationSpeed;
-    }
-  });
+  // Disabled automatic rotation to prevent auto-zoom issues
+  // useFrame((state) => {
+  //   if (groupRef.current) {
+  //     groupRef.current.rotation.y += 0.001 * animationSpeed;
+  //   }
+  // });
 
   // Generate energy flow connections
   const energyConnections = useMemo(() => {

@@ -113,11 +113,11 @@ export const use3DScene = create<Scene3DState>()(
       maxParticles: 1000,
       lodEnabled: true,
       
-      // Animation settings
-      animationSpeed: 1.0,
-      pauseAnimations: false,
-      particleAnimations: true,
-      cameraAnimations: true,
+      // Animation settings - disabled to prevent auto-zoom issues
+      animationSpeed: 0.0,
+      pauseAnimations: true,
+      particleAnimations: false,
+      cameraAnimations: false,
       
       // Camera state
       camera: {
@@ -159,14 +159,14 @@ export const use3DScene = create<Scene3DState>()(
         skybox: true
       },
       
-      // Interaction state
+      // Interaction state - completely disabled to prevent auto-zoom issues
       orbitControls: {
-        enabled: true,
-        enablePan: true,
-        enableZoom: true,
-        enableRotate: true,
+        enabled: false,
+        enablePan: false,
+        enableZoom: false,
+        enableRotate: false,
         autoRotate: false,
-        autoRotateSpeed: 0.5,
+        autoRotateSpeed: 0,
         minDistance: 5,
         maxDistance: 100
       },

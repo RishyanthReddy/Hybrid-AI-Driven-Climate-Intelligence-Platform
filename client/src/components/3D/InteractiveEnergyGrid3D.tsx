@@ -99,14 +99,15 @@ const InteractiveEnergyGrid3D: React.FC<InteractiveEnergyGrid3DProps> = ({
       }
     }, [node.nodeType]);
 
-    useFrame((state) => {
-      if (meshRef.current && node.status === 'online') {
-        const baseScale = isSelected ? 1.3 : (isHovered ? 1.1 : 1);
-        const pulse = 1 + Math.sin(state.clock.elapsedTime * 1.5 + index * 0.5) * 0.05;
-        meshRef.current.scale.setScalar(baseScale * pulse);
-        meshRef.current.rotation.y += 0.005;
-      }
-    });
+    // Disabled animation to prevent auto-zoom issues
+    // useFrame((state) => {
+    //   if (meshRef.current && node.status === 'online') {
+    //     const baseScale = isSelected ? 1.3 : (isHovered ? 1.1 : 1);
+    //     const pulse = 1 + Math.sin(state.clock.elapsedTime * 1.5 + index * 0.5) * 0.05;
+    //     meshRef.current.scale.setScalar(baseScale * pulse);
+    //     meshRef.current.rotation.y += 0.005;
+    //   }
+    // });
 
     const handlePointerOver = useCallback((e: any) => {
       e.stopPropagation();
@@ -256,24 +257,25 @@ const InteractiveEnergyGrid3D: React.FC<InteractiveEnergyGrid3DProps> = ({
       return [positions, colors];
     }, [particleCount]);
 
-    useFrame((state) => {
-      if (particlesRef.current) {
-        const positions = particlesRef.current.geometry.attributes.position.array as Float32Array;
-        
-        for (let i = 0; i < particleCount; i++) {
-          const i3 = i * 3;
-          positions[i3 + 1] += 0.01;
-          
-          if (positions[i3 + 1] > 10) {
-            positions[i3 + 1] = 0;
-            positions[i3] = (Math.random() - 0.5) * 20;
-            positions[i3 + 2] = (Math.random() - 0.5) * 20;
-          }
-        }
-        
-        particlesRef.current.geometry.attributes.position.needsUpdate = true;
-      }
-    });
+    // Disabled animation to prevent auto-zoom issues
+    // useFrame((state) => {
+    //   if (particlesRef.current) {
+    //     const positions = particlesRef.current.geometry.attributes.position.array as Float32Array;
+    //
+    //     for (let i = 0; i < particleCount; i++) {
+    //       const i3 = i * 3;
+    //       positions[i3 + 1] += 0.01;
+    //
+    //       if (positions[i3 + 1] > 10) {
+    //         positions[i3 + 1] = 0;
+    //         positions[i3] = (Math.random() - 0.5) * 20;
+    //         positions[i3 + 2] = (Math.random() - 0.5) * 20;
+    //       }
+    //     }
+    //
+    //     particlesRef.current.geometry.attributes.position.needsUpdate = true;
+    //   }
+    // });
 
     return (
       <points ref={particlesRef}>
@@ -306,16 +308,27 @@ const InteractiveEnergyGrid3D: React.FC<InteractiveEnergyGrid3DProps> = ({
     <>
       {interactive && (
         <OrbitControls
-          enablePan={true}
-          enableZoom={true}
-          enableRotate={true}
+          enablePan={false}
+          enableZoom={false}
+          enableRotate={false}
           minDistance={8}
           maxDistance={50}
           minPolarAngle={0}
           maxPolarAngle={Math.PI / 2.2}
           autoRotate={false}
-          dampingFactor={0.1}
-          enableDamping={true}
+          dampingFactor={0}
+          enableDamping={false}
+          domElement={undefined}
+          listenToKeyEvents={undefined}
+          touches={{
+            ONE: 0, // Disable touch rotate
+            TWO: 0  // Disable two-finger gestures
+          }}
+          mouseButtons={{
+            LEFT: 0,   // Disable mouse rotate
+            MIDDLE: 0, // Disable middle mouse
+            RIGHT: 0   // Disable right mouse
+          }}
         />
       )}
       

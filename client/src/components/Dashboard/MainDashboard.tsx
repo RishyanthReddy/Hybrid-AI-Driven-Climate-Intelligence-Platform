@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Canvas } from "@react-three/fiber";
-import { Suspense } from "react";
 import MetricsPanel from "./MetricsPanel";
 import AIInsightsPanel from "./AIInsightsPanel";
-import InteractiveEnergyGrid3D from "../3D/InteractiveEnergyGrid3D";
-import ClimateHeatmap from "../3D/ClimateHeatmap";
 import DataVisualization from "../Visualization/DataVisualization";
+import CinematicVisualization from "../3D/CinematicVisualization";
 import { useClimateData } from "../../lib/stores/useClimateData";
 import { useEnergyData } from "../../lib/stores/useEnergyData";
 import { useAlgorithms } from "../../lib/hooks/useAlgorithms";
@@ -140,61 +137,161 @@ const MainDashboard: React.FC = () => {
           {activeView === 'overview' && (
             <div className="h-full grid grid-cols-2 gap-4 p-4">
               <div className="glass rounded-xl overflow-hidden">
-                <div className="h-full">
-                  <Canvas camera={{ position: [0, 5, 10], fov: 60 }}>
-                    <Suspense fallback={null}>
-                      <ambientLight intensity={0.6} />
-                      <directionalLight position={[10, 10, 5]} intensity={1} />
-                      <InteractiveEnergyGrid3D data={energyData} interactive={false} />
-                    </Suspense>
-                  </Canvas>
+                <div className="h-full p-4 flex items-center justify-center">
+                  <div className="text-center">
+                    <div className="w-16 h-16 mx-auto mb-3 bg-blue-500/20 rounded-full flex items-center justify-center">
+                      <i className="fas fa-bolt text-2xl text-blue-400"></i>
+                    </div>
+                    <h4 className="text-lg font-semibold text-white mb-2">Energy Grid</h4>
+                    <div className="space-y-2 text-sm">
+                      <div className="bg-green-500/20 p-2 rounded">
+                        <div className="text-green-400 font-semibold">98.7%</div>
+                        <div className="text-white/70">Efficiency</div>
+                      </div>
+                      <div className="bg-blue-500/20 p-2 rounded">
+                        <div className="text-blue-400 font-semibold">2.4 GW</div>
+                        <div className="text-white/70">Output</div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
               
               <div className="glass rounded-xl overflow-hidden">
-                <div className="h-full">
-                  <Canvas camera={{ position: [0, 5, 10], fov: 60 }}>
-                    <Suspense fallback={null}>
-                      <ambientLight intensity={0.6} />
-                      <directionalLight position={[10, 10, 5]} intensity={1} />
-                      <ClimateHeatmap data={climateData} />
-                    </Suspense>
-                  </Canvas>
+                <div className="h-full p-4 flex items-center justify-center">
+                  <div className="text-center">
+                    <div className="w-16 h-16 mx-auto mb-3 bg-green-500/20 rounded-full flex items-center justify-center">
+                      <i className="fas fa-thermometer-half text-2xl text-green-400"></i>
+                    </div>
+                    <h4 className="text-lg font-semibold text-white mb-2">Climate Data</h4>
+                    <div className="space-y-2 text-sm">
+                      <div className="bg-red-500/20 p-2 rounded">
+                        <div className="text-red-400 font-semibold">+1.3°C</div>
+                        <div className="text-white/70">Temp Rise</div>
+                      </div>
+                      <div className="bg-orange-500/20 p-2 rounded">
+                        <div className="text-orange-400 font-semibold">425 ppm</div>
+                        <div className="text-white/70">CO₂ Level</div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
               
               <div className="col-span-2 glass rounded-xl p-4">
-                <DataVisualization 
+                <DataVisualization
                   energyData={energyData}
                   climateData={climateData}
                 />
+              </div>
+
+              {/* 3D Visualization Row */}
+              <div className="col-span-2 glass rounded-xl overflow-hidden">
+                <div className="p-4 border-b border-white/10">
+                  <h3 className="text-white font-semibold flex items-center gap-2">
+                    <i className="fas fa-cube text-blue-400"></i>
+                    3D Energy Grid
+                  </h3>
+                  <p className="text-white/60 text-sm">Interactive 3D visualization</p>
+                </div>
+                <div className="h-64">
+                  <CinematicVisualization type="energy" className="w-full h-full" />
+                </div>
               </div>
             </div>
           )}
 
           {activeView === 'energy' && (
-            <div className="h-full">
-              <Canvas camera={{ position: [0, 10, 20], fov: 60 }}>
-                <Suspense fallback={null}>
-                  <ambientLight intensity={0.4} />
-                  <directionalLight position={[10, 10, 5]} intensity={1} />
-                  <pointLight position={[0, 10, 0]} intensity={0.5} color="#4facfe" />
-                  <InteractiveEnergyGrid3D data={energyData} interactive={true} />
-                </Suspense>
-              </Canvas>
+            <div className="h-full space-y-6">
+              {/* 3D Energy Visualization */}
+              <div className="h-96 bg-black/20 rounded-xl overflow-hidden">
+                <div className="p-4 border-b border-white/10">
+                  <h3 className="text-white font-semibold flex items-center gap-2">
+                    <i className="fas fa-bolt text-blue-400"></i>
+                    3D Energy Grid
+                  </h3>
+                  <p className="text-white/60 text-sm">Interactive energy distribution network</p>
+                </div>
+                <div className="h-80">
+                  <CinematicVisualization type="energy" className="w-full h-full" />
+                </div>
+              </div>
+
+              {/* Energy Stats */}
+              <div className="bg-gradient-to-br from-blue-900/30 to-cyan-900/30 rounded-lg p-6">
+                <div className="text-center">
+                  <div className="w-32 h-32 mx-auto mb-4 bg-cyan-500/20 rounded-full flex items-center justify-center">
+                    <i className="fas fa-plug text-4xl text-cyan-400"></i>
+                  </div>
+                  <h3 className="text-xl font-semibold text-white mb-2">Energy Distribution</h3>
+                  <p className="text-white/70 mb-4">Advanced grid management system</p>
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div className="bg-green-500/20 p-3 rounded">
+                      <div className="text-green-400 font-semibold">99.2%</div>
+                      <div className="text-white/70">Uptime</div>
+                    </div>
+                    <div className="bg-blue-500/20 p-3 rounded">
+                      <div className="text-blue-400 font-semibold">3.1 GW</div>
+                      <div className="text-white/70">Peak Load</div>
+                    </div>
+                    <div className="bg-yellow-500/20 p-3 rounded">
+                      <div className="text-yellow-400 font-semibold">42</div>
+                      <div className="text-white/70">Substations</div>
+                    </div>
+                    <div className="bg-purple-500/20 p-3 rounded">
+                      <div className="text-purple-400 font-semibold">8ms</div>
+                      <div className="text-white/70">Latency</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
 
           {activeView === 'climate' && (
-            <div className="h-full">
-              <Canvas camera={{ position: [0, 10, 20], fov: 60 }}>
-                <Suspense fallback={null}>
-                  <ambientLight intensity={0.4} />
-                  <directionalLight position={[10, 10, 5]} intensity={1} />
-                  <pointLight position={[0, 10, 0]} intensity={0.5} color="#43e97b" />
-                  <ClimateHeatmap data={climateData} interactive={true} />
-                </Suspense>
-              </Canvas>
+            <div className="h-full space-y-6">
+              {/* 3D Climate Visualization */}
+              <div className="h-96 bg-black/20 rounded-xl overflow-hidden">
+                <div className="p-4 border-b border-white/10">
+                  <h3 className="text-white font-semibold flex items-center gap-2">
+                    <i className="fas fa-thermometer-half text-red-400"></i>
+                    3D Climate Heatmap
+                  </h3>
+                  <p className="text-white/60 text-sm">Environmental impact visualization</p>
+                </div>
+                <div className="h-80">
+                  <CinematicVisualization type="climate" className="w-full h-full" />
+                </div>
+              </div>
+
+              {/* Climate Stats */}
+              <div className="bg-gradient-to-br from-green-900/30 to-red-900/30 rounded-lg p-6">
+                <div className="text-center">
+                  <div className="w-32 h-32 mx-auto mb-4 bg-red-500/20 rounded-full flex items-center justify-center">
+                    <i className="fas fa-thermometer-half text-4xl text-red-400"></i>
+                  </div>
+                  <h3 className="text-xl font-semibold text-white mb-2">Climate Impact</h3>
+                  <p className="text-white/70 mb-4">Environmental monitoring system</p>
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div className="bg-red-500/20 p-3 rounded">
+                      <div className="text-red-400 font-semibold">+1.3°C</div>
+                      <div className="text-white/70">Temp Rise</div>
+                    </div>
+                    <div className="bg-orange-500/20 p-3 rounded">
+                      <div className="text-orange-400 font-semibold">425 ppm</div>
+                      <div className="text-white/70">CO₂ Level</div>
+                    </div>
+                    <div className="bg-yellow-500/20 p-3 rounded">
+                      <div className="text-yellow-400 font-semibold">62.7%</div>
+                      <div className="text-white/70">Carbon Budget</div>
+                    </div>
+                    <div className="bg-green-500/20 p-3 rounded">
+                      <div className="text-green-400 font-semibold">33.5%</div>
+                      <div className="text-white/70">Renewable</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
 
@@ -294,6 +391,17 @@ const MainDashboard: React.FC = () => {
             </div>
           </div>
         </motion.div>
+      </div>
+
+      {/* Empty content for scrolling */}
+      <div className="h-screen"></div>
+      <div className="h-screen bg-gradient-to-b from-transparent to-black/10 rounded-xl mb-6"></div>
+      <div className="h-screen bg-gradient-to-b from-black/10 to-transparent rounded-xl mb-6"></div>
+      <div className="h-64 flex items-center justify-center">
+        <div className="text-center text-white/50">
+          <i className="fas fa-arrow-up text-2xl mb-2"></i>
+          <p>Scroll up to return to dashboard</p>
+        </div>
       </div>
     </motion.div>
   );
