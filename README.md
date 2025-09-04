@@ -1899,28 +1899,6 @@ npm install
 - **Enterprise Plan**: $2,999/month for large corporations
 - **Custom Solutions**: Tailored pricing for government and research institutions
 
-## 🤝 Team & Expertise
-
-Our founding team combines decades of experience in:
-- **Climate Science**: PhD-level expertise in atmospheric physics and environmental modeling
-- **Software Engineering**: Senior engineers from top tech companies (Google, Microsoft, Tesla)
-- **Data Science**: Machine learning specialists with climate domain knowledge
-- **Business Development**: Proven track record in cleantech and SaaS scaling
-
-## 📞 Support & Contact
-
-### Technical Support
-- **Documentation**: Comprehensive API and user guides
-- **Community Forum**: Developer community with 5,000+ members
-- **Enterprise Support**: 24/7 support for enterprise customers
-- **Training Programs**: Onboarding and advanced training available
-
-### Contact Information
-- **Website**: https://climate-ai-platform.com
-- **Email**: team@climate-ai-platform.com
-- **LinkedIn**: /company/climate-ai-platform
-- **Twitter**: @ClimateAIPlatform
-
 ## 📋 License & Legal
 
 This project is proprietary software developed for commercial use. The code is provided for evaluation purposes in connection with Y-Combinator application process.
