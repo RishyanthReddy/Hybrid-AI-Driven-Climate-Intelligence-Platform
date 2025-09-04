@@ -1,6 +1,5 @@
 # Hybrid AI-Driven Climate Intelligence Platform: A Novel Approach to Real-Time Energy Optimization and Sustainability Assessment
 
-## Research Paper - Q1 Standard Publication
 
 **Abstract**
 
